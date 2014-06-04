@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+              http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5"
+         xmlns="http://java.sun.com/xml/ns/javaee">
+
+  
+  <servlet>
+    <servlet-name>getOrdersServlet</servlet-name>
+    <servlet-class>getOrdersServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>getOrdersServlet</servlet-name>
+    <url-pattern>/getOrders</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>generateRandomOrder</servlet-name>
+    <servlet-class>GenerateRandomOrderServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>generateRandomOrder</servlet-name>
+    <url-pattern>/generateRandomOrder</url-pattern>
+  </servlet-mapping>
+  
+  
+   <servlet>
+    <servlet-name>generateDefaultEntitiesServlet</servlet-name>
+    <servlet-class>GenerateDefaultEntitiesServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>generateDefaultEntitiesServlet</servlet-name>
+    <url-pattern>/generateDefaultEntities</url-pattern>
+  </servlet-mapping>
+  
+  
+  <mime-mapping>
+    <extension>mf</extension>
+    <mime-type>text/cache-manifest</mime-type>
+  </mime-mapping>
+</web-app>

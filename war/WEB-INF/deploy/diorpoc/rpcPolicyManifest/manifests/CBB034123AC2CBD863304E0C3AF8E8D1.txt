@@ -1,0 +1,2 @@
+serviceClass: com.tdebroc.dior.client.GreetingService
+path: F5E7652A8C38DB737991E5974E824D9E.gwt.rpc
