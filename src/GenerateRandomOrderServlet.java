@@ -6,10 +6,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dior.utilities.Utilities;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.tdebroc.utilities.NameGenerator;
+import com.tdebroc.utilities.Utilities;
 
 public class GenerateRandomOrderServlet extends HttpServlet {
   
@@ -22,8 +23,6 @@ public class GenerateRandomOrderServlet extends HttpServlet {
   public void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws IOException, ServletException {
 
-	    Entity entityProperty = new Entity("EntityProperty");
-	  
 	    Entity order = new Entity("Order");
 	    Date date = new Date();
 	    order.setProperty("date", date);
@@ -36,6 +35,6 @@ public class GenerateRandomOrderServlet extends HttpServlet {
 	    // Gson o =new Gson();
 	    
 	    resp.setContentType("text/plain");
-        resp.getWriter().println(Utilities.entityToJson(order));
+        resp.getWriter().println(Utilities.entityToJsonString(order));
   }
 }

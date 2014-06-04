@@ -37,6 +37,26 @@
     <url-pattern>/generateDefaultEntities</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>getEntitiesServlet</servlet-name>
+    <servlet-class>GetEntitiesServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>getEntitiesServlet</servlet-name>
+    <url-pattern>/getEntities</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>getEntityServlet</servlet-name>
+    <servlet-class>GetEntityServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>getEntityServlet</servlet-name>
+    <url-pattern>/getEntity</url-pattern>
+  </servlet-mapping>
+  
   
   <mime-mapping>
     <extension>mf</extension>

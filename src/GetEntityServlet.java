@@ -8,31 +8,32 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
-import com.google.gson.JsonArray;
-import com.tdebroc.utilities.Utilities;
+import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 
-public class GetEntitiesServlet extends HttpServlet {
+public class GetEntityServlet extends HttpServlet {
   
   private static final long serialVersionUID = 1L;
  
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws IOException, ServletException {
-	    String entityName = req.getParameter("EntityName");
+	    String entityKey = req.getParameter("EntityKey");
+	    entityKey = entityKey.replaceAll("=", "");
+	    Key key = KeyFactory.stringToKey(entityKey);
 	    
-	    Query q = new Query(entityName);
 	    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-	    PreparedQuery pq = datastore.prepare(q);  
-	    
-	    JsonArray allEntities = new JsonArray();
-	    
-	    for (Entity result : pq.asIterable()) {
-	      allEntities.add(Utilities.entityToJson(result));
-	    }
-	    
+	    Entity entity;
 	    resp.setContentType("text/plain");
-        resp.getWriter().println(allEntities);
+		try {
+			entity = datastore.get(key); 
+	        resp.getWriter().println(entity);
+		} catch (EntityNotFoundException e) {
+			resp.getWriter().println("Error while fecthing key !");
+			e.printStackTrace();
+		}
+	    
+	   
   }
 }

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.tdebroc.utilities.NameGenerator;
 
 public class getOrdersServlet extends HttpServlet {
   
@@ -32,7 +33,6 @@ public class getOrdersServlet extends HttpServlet {
 
 	    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 	    datastore.put(order);
-	    // Gson o =new Gson();
 	    
 	    ServletContext sc = getServletContext();
 	    RequestDispatcher rd = sc.getRequestDispatcher("/getOrders.jsp");

@@ -1,0 +1,13 @@
+
+
+body {
+	padding: 2 0px;
+}
+
+#content {
+	padding: 20px;
+}
+
+.updateButton {
+	cursor: pointer;
+}
