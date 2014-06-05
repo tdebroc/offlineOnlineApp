@@ -1,14 +1,13 @@
 package com.tdebroc.utilities;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class NameGenerator {
 
-	private List vocals = new ArrayList();
-	private List startConsonants = new ArrayList();
-	private List endConsonants = new ArrayList();
-	private List nameInstructions = new ArrayList();
+	private ArrayList<String> vocals = new ArrayList<String>();
+	private ArrayList<String> startConsonants = new ArrayList<String>();
+	private ArrayList<String> endConsonants = new ArrayList<String>();
+	private ArrayList<String> nameInstructions = new ArrayList<String>();
 
 	public NameGenerator() {
 		String demoVocals[] = { "a", "e", "i", "o", "u", "ei", "ai", "ou", "j",
@@ -102,7 +101,7 @@ public class NameGenerator {
 				+ name.substring(1);
 	}
 
-	private String getRandomElementFrom(List v) {
+	private String getRandomElementFrom(ArrayList<String> v) {
 		return (String) v.get(randomInt(0, v.size() - 1));
 	}
 }
