@@ -10,7 +10,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.tdebroc.utilities.NameGenerator;
-import com.tdebroc.utilities.Utilities;
+import com.tdebroc.utilities.JsonUtilities;
 
 public class GenerateRandomOrderServlet extends HttpServlet {
   
@@ -35,6 +35,6 @@ public class GenerateRandomOrderServlet extends HttpServlet {
 	    // Gson o =new Gson();
 	    
 	    resp.setContentType("text/plain");
-        resp.getWriter().println(Utilities.entityToJsonString(order));
+        resp.getWriter().println(JsonUtilities.entityToJsonString(order));
   }
 }

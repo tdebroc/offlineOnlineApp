@@ -58,6 +58,17 @@
   </servlet-mapping>
   
   
+  <servlet>
+    <servlet-name>updateEntityServlet</servlet-name>
+    <servlet-class>UpdateEntityServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>updateEntityServlet</servlet-name>
+    <url-pattern>/updateEntity</url-pattern>
+  </servlet-mapping>
+  
+  
   <mime-mapping>
     <extension>mf</extension>
     <mime-type>text/cache-manifest</mime-type>

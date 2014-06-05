@@ -11,7 +11,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.gson.JsonArray;
-import com.tdebroc.utilities.Utilities;
+import com.tdebroc.utilities.JsonUtilities;
 
 public class GetEntitiesServlet extends HttpServlet {
   
@@ -29,7 +29,7 @@ public class GetEntitiesServlet extends HttpServlet {
 	    JsonArray allEntities = new JsonArray();
 	    
 	    for (Entity result : pq.asIterable()) {
-	      allEntities.add(Utilities.entityToJson(result));
+	      allEntities.add(JsonUtilities.entityToJson(result));
 	    }
 	    
 	    resp.setContentType("text/plain");

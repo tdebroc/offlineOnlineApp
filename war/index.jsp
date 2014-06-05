@@ -2,7 +2,7 @@
 <%@ page import="com.google.appengine.api.users.User" %>
 <%@ page import="com.google.appengine.api.users.UserService" %>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
-<%@ page import="com.tdebroc.utilities.Utilities" %>
+<%@ page import="com.tdebroc.utilities.JsonUtilities" %>
 <%@ page import="java.util.List" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
@@ -16,14 +16,15 @@
   
   <body>
     <%
-        String modelName = request.getParameter("modelName");;
+      String modelName = request.getParameter("modelName");;
         if (modelName == null) {
           modelName = "Order";
         }
     %> 
     <script type="text/javascript">
-      var MODEL_NAME = "<%=modelName %>";
-      var ENTITY_KIND_PROPERTY_NAME = "<%=Utilities.ENTITY_KIND_PROPERTY_NAME %>";
+      var MODEL_NAME = "<%=modelName%>";
+      var ENTITY_KIND_PROPERTY_NAME = "<%=JsonUtilities.ENTITY_KIND_PROPERTY_NAME%>";
+      var ENTITY_KEY_PROPERTY_NAME = "<%=JsonUtilities.ENTITY_KEY_PROPERTY_NAME%>";
     </script>
     
     <div id="content">
@@ -43,8 +44,8 @@
             
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn btn-default cancelSaveChange" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary saveChange">Save changes</button>
           </div>
         </div>
       </div>
@@ -77,6 +78,7 @@
     <script src="static/js/main.js"></script>
     <script src="static/js/Table.js"></script>
     <script src="static/js/Form.js"></script>    
+    <script src="static/js/DataBaseManager.js"></script>
   </body>
 
 </html>

@@ -28,7 +28,7 @@ function Form() {
         entityKind);
     this.form.append(input);
     
-    var input = this.buildInput('hidden', 'key', key);
+    var input = this.buildInput('hidden', ENTITY_KEY_PROPERTY_NAME, key);
     this.form.append(input);
     
     for (var i = 0; i < fields.length; i++) {
@@ -38,6 +38,38 @@ function Form() {
     }
     
     return this.form;
+  }
+  
+  
+  /**
+   * Binds update click button.
+   * @param {String || $} Selector 
+   */
+  this.bindUpdateClickButton = function(updateButton) {
+    $(updateButton).click(this.launchesUpdate.bind(this));
+  }
+  
+  
+  /**
+   * Launches update from the form. 
+   */
+  this.launchesUpdate = function() {
+    console.log("launches Updates : " + JSON.stringify(this.serializeForm()));
+    DATABASE_MANAGER.updateEntity(this.serializeForm());
+  }
+  
+  
+  /**
+   * Serializes form.
+   */
+  this.serializeForm = function() {
+    var formJson = {};
+    var inputElements =  this.form.find('input');
+    for (var i = 0; i < inputElements.length; i++) {
+      var input = inputElements.eq(i);
+      formJson[input.attr('name')] = input.val();
+    }
+    return formJson;
   }
   
   

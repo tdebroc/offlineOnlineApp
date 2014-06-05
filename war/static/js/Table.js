@@ -11,7 +11,7 @@ function Table() {
 	/* {String} Name of the property designing the Entity Kind. */
 	this.entityKindPropertyName = ENTITY_KIND_PROPERTY_NAME;
 	/* {String} Name of the property designing the Entity Key. */
-	this.entityKeyPropertyName = "key";
+	this.entityKeyPropertyName = ENTITY_KEY_PROPERTY_NAME;
 	/* {Object} . */
 	var propertiesNotDisplayed = [this.entityKindPropertyName, this.entityKeyPropertyName];
 	/* {String} Class for update button . */
@@ -53,7 +53,7 @@ function Table() {
 			this.tableEl.append(lineEl);
 		}
 		
-		$(parentSelector).append(this.tableEl);
+		$(parentSelector).html(this.tableEl);
 		
 		this.initListeners();
 	}
@@ -83,6 +83,9 @@ function Table() {
 	  
 	  var formElement = form.buildForm(this.headKeys, MODEL_NAME,
 	      key, dataLine);
+	  
+	  $("#updateModal .modal-body").append(formElement);
+	  form.bindUpdateClickButton("#updateModal .saveChange");
 	  
 	  $("#updateModal .modal-body").html("Let's update entity with key " + key);
 	  $("#updateModal .modal-body").append(formElement);
