@@ -11,6 +11,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -65,7 +66,7 @@ public class JsonUtilities {
 	/**
 	 * Updates a datastore entity from it's JSON.
 	 * @param entityJson
-	 * @return
+	 * @return {Boolean} Whether the update had worked or not.
 	 */
 	public static boolean  updateEntityFromJson(JsonObject entityJson) {
 	  String keyString = entityJson.get(JsonUtilities.ENTITY_KEY_PROPERTY_NAME).getAsString();
@@ -89,7 +90,24 @@ public class JsonUtilities {
       return false;
     }
 	}
+
 	
+	/**
+   * Updates several datastore entities from a JSON array containing them.
+   * @param entitiesJsonArray {JsonArray}
+   * @return {Boolean} Whether the update had worked or not.
+   */
+  public static boolean updateEntitiesFromJson(JsonArray entitiesJsonArray) {
+    Iterator<JsonElement> entititiesIterator = entitiesJsonArray.iterator();
+    
+    while (entititiesIterator.hasNext()) {
+      JsonElement jsonElement = entititiesIterator.next();
+      updateEntityFromJson(jsonElement.getAsJsonObject());
+    }
+    return true;
+  }
+	
+  
 	
 	
 }

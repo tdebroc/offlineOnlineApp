@@ -22,10 +22,18 @@
         }
     %> 
     <script type="text/javascript">
+      // TODO : "ModelName" is bad naming convention, to change everywhere with 
+      // "EntityKind"
       var MODEL_NAME = "<%=modelName%>";
       var ENTITY_KIND_PROPERTY_NAME = "<%=JsonUtilities.ENTITY_KIND_PROPERTY_NAME%>";
       var ENTITY_KEY_PROPERTY_NAME = "<%=JsonUtilities.ENTITY_KEY_PROPERTY_NAME%>";
     </script>
+    
+    <div id="header">
+      <div id="synchronizedLogo">
+      Synchronized
+      </div>
+    </div>
     
     <div id="content">
       

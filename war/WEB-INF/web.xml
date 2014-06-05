@@ -68,6 +68,16 @@
     <url-pattern>/updateEntity</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>UpdateEntities</servlet-name>
+    <servlet-class>UpdateEntitiesServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>UpdateEntities</servlet-name>
+    <url-pattern>/updateEntities</url-pattern>
+  </servlet-mapping>
+  
   
   <mime-mapping>
     <extension>mf</extension>

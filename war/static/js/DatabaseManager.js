@@ -4,7 +4,7 @@
  */
 var DATABASE_MANAGER = new (function() {
   
-  this.isOnline = true;
+  this.isOnline = false;
   
   /**
    * Updates Entity from a JSON.
@@ -15,7 +15,7 @@ var DATABASE_MANAGER = new (function() {
       $.get("updateEntity?entityJson=" + JSON.stringify(jsonEntity),
           this.callBackUpdateEntity.bind(this));      
     } else {
-      
+      this.addToOfflineWaitingList(jsonEntity);
     }
     this.updateLocalStorageModel(jsonEntity);
   }
@@ -29,7 +29,60 @@ var DATABASE_MANAGER = new (function() {
   }
   
   /**
+   * @param {JSON} jsonEntity
+   */
+  this.addToOfflineWaitingList = function(jsonEntity) {
+    var modelName = jsonEntity[ENTITY_KIND_PROPERTY_NAME];
+    var offlineWaitingList = this.getOfflineWaitingList(modelName);
+    offlineWaitingList.push(jsonEntity);
+    localStorage["offlineWaitingList" + modelName] =
+        JSON.stringify(offlineWaitingList);
+    this.updateSynchLogo();
+  }
+  
+  
+  /**
+   * @param {JSON} jsonEntity
+   * @return {String} jsonEntity
+   */
+  this.getOfflineWaitingList = function(modelName) {
+    var offlineWaitingList = localStorage["offlineWaitingList" + modelName];
+    if (offlineWaitingList) {
+      return JSON.parse(offlineWaitingList);
+    } else {
+      return [];
+    }
+  }
+  
+  /**
+   * Updates status of synch logo.
+   */
+  this.updateSynchLogo = function() {
+    var offlineWaitingList = localStorage["offlineWaitingList" + MODEL_NAME];
+    if (offlineWaitingList.length == 0) {
+      $('#synchronizedLogo').css('background-color', 'green');
+    } else {
+      $('#synchronizedLogo').css('background-color', 'red');
+    }
+  }
+  
+  
+  /**
+   * 
+   */
+  this.launchOfflineWaitingListSynchronization = function() {
+    // TODO() : parses all local Storage key to look all offlineWainting list. 
+    var offlineWaitingList = localStorage["offlineWaitingList" + MODEL_NAME];
+    $.get("updateEntities?entitiesJson=" + offlineWaitingList,
+        function() {
+      console.log("offlineWaitingList updateEntities Done");
+    })
+  }
+  
+  
+  /**
    * Updates localStorage from entity
+   * @param {JSON} jsonEntity
    */
   this.updateLocalStorageModel = function(jsonEntity) {
     var modelName = jsonEntity[ENTITY_KIND_PROPERTY_NAME];
