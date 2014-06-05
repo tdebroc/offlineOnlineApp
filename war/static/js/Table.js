@@ -9,15 +9,18 @@ function Table() {
 	/* {String} Name of the Model. */
 	this.modelName;
 	/* {String} Name of the property designing the Entity Kind. */
-	this.entityKindPropertyName = "EntityKind";
+	this.entityKindPropertyName = ENTITY_KIND_PROPERTY_NAME;
 	/* {String} Name of the property designing the Entity Key. */
 	this.entityKeyPropertyName = "key";
 	/* {Object} . */
 	var propertiesNotDisplayed = [this.entityKindPropertyName, this.entityKeyPropertyName];
 	/* {String} Class for update button . */
   var updateButtonClass = "updateButton";
-	
-	/**
+  /* {Array[String]} Array with all header for the table. */
+  this.headKeys;
+  
+
+  /**
 	 * Initializes the table and displays it.
 	 * @param parentSelector {$}
 	 * @param datas {JSON}
@@ -32,6 +35,7 @@ function Table() {
 		
 		var headLine = $('<tr></tr>');
 		var headKeys = getHeadKeyFromDatas(datas);
+		this.headKeys = headKeys;
 		for (var i = 0; i < headKeys.length; i++) {
 			headLine.append("<th>" + headKeys[i] + "</th>")
 		}
@@ -68,8 +72,20 @@ function Table() {
 	 * Handles click on update button.
 	 */
 	this.handleClickUpdate = function(e) {
-	  var key = $(e.currentTarget).closest('tr').attr('data-key');
+	  var tableLine = $(e.currentTarget).closest('tr');
+	  var tdElements = tableLine.find('td');
+	  var key = tableLine.attr('data-key');
+	  var form = new Form();
+	  var dataLine = [];
+	  for (var i = 0; i < tdElements.length; i++) {
+	    dataLine.push(tdElements[i].innerHTML);
+	  }
+	  
+	  var formElement = form.buildForm(this.headKeys, MODEL_NAME,
+	      key, dataLine);
+	  
 	  $("#updateModal .modal-body").html("Let's update entity with key " + key);
+	  $("#updateModal .modal-body").append(formElement);
 	  $("#updateModal").modal();
 	}
 	

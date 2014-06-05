@@ -8,7 +8,8 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.gson.JsonObject;
 
 public class Utilities {
-	
+	public final static String ENTITY_KIND_PROPERTY_NAME = "EntityKind";
+  
 	public static String entityToJsonString(Entity entity) {
 		return entityToJson(entity).toString();
 	}
@@ -18,7 +19,7 @@ public class Utilities {
 		Map<String, Object> properties = entity.getProperties();
 		
 		JsonObject jsonObject = new JsonObject();
-		jsonObject.addProperty("EntityName", entity.getKind());
+		jsonObject.addProperty("EntityKind", entity.getKind());
 		jsonObject.addProperty("key", KeyFactory.keyToString(entity.getKey()));
 		
 		Iterator<String> iterator = properties.keySet().iterator();

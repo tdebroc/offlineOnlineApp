@@ -2,6 +2,7 @@
 <%@ page import="com.google.appengine.api.users.User" %>
 <%@ page import="com.google.appengine.api.users.UserService" %>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
+<%@ page import="com.tdebroc.utilities.Utilities" %>
 <%@ page import="java.util.List" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
@@ -22,6 +23,7 @@
     %> 
     <script type="text/javascript">
       var MODEL_NAME = "<%=modelName %>";
+      var ENTITY_KIND_PROPERTY_NAME = "<%=Utilities.ENTITY_KIND_PROPERTY_NAME %>";
     </script>
     
     <div id="content">
@@ -74,6 +76,7 @@
     <script  src="static/js/bootstrap.js"></script>
     <script src="static/js/main.js"></script>
     <script src="static/js/Table.js"></script>
+    <script src="static/js/Form.js"></script>    
   </body>
 
 </html>
