@@ -7,7 +7,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE HTML>
-<html <%--manifest="manifest.mf" --%>>
+<html manifest="manifest.mf" >
   <head>
     <title>Offline / Online App</title>
     <meta name="viewport" content="width=device-width, user-scalable=no">
