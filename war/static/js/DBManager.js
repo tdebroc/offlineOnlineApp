@@ -3,20 +3,66 @@
  * Class managing AJAX synchronization.
  */
 var DATABASE_MANAGER = new (function() {
-  
+  /* {Boolean} Whether user is online. */  
   this.isOnline = false;
+  /* {Boolean} Whether database Manager should check if online. */  
+  this.shouldCheckOnline = false;
+  /* {Number} checkOnlineDelay. */
+  var checkOnlineDelay = 2000;
+  
+  /**
+   * Initializes Database Manager.
+   */
+  this.init = function() {
+    this.checkOnline();
+  }
+  
+  
+  /**
+   * Checks online status.
+   */
+  this.checkOnline = function() {
+    $.ajax({'url' : "checkOnline"})
+        .done(this.successIsOnline.bind(this))
+        .fail(this.failIsOnline.bind(this));
+    setTimeout(this.checkOnline.bind(this), checkOnlineDelay);
+  }
+  
+  
+  /**
+   * Handles success on is online request.
+   */
+  this.successIsOnline = function() {
+    this.shouldCheckOnline = false;
+    this.changeOnlineStatus(true);
+    this.launchOfflineWaitingListSynchronization();
+  }
+  
+  
+  /**
+   * Handles failure on is online request.
+   */
+  this.failIsOnline = function() {
+    this.changeOnlineStatus(false);
+  }
+
   
   /**
    * Updates Entity from a JSON.
    * @param {JSON} jsonEntity
    */
   this.updateEntity = function(jsonEntity) {
-    if (this.isOnline) {
-      $.get("updateEntity?entityJson=" + JSON.stringify(jsonEntity),
-          this.callBackUpdateEntity.bind(this));      
-    } else {
-      this.addToOfflineWaitingList(jsonEntity);
-    }
+    $.ajax({
+      'url' : "updateEntity?entityJson=" + JSON.stringify(jsonEntity)
+    })
+    .done(this.successUpdateEntity.bind(this))
+    .fail(
+      (function(scope, firstParam) {
+        return function() {
+          scope.failUpdateEntity(firstParam)
+        }
+      }) (this, jsonEntity)
+    );
     this.updateLocalStorageModel(jsonEntity);
   }
   
@@ -24,9 +70,37 @@ var DATABASE_MANAGER = new (function() {
   /**
    * Callback for the update entity ajax call.
    */
-  this.callBackUpdateEntity = function() {
-    $('.cancelSaveChange').click();
+  this.successUpdateEntity = function() {
+    console.log("update entity is a success");
   }
+  
+  
+  /**
+   * Callback for the update entity ajax call.
+   */
+  this.failUpdateEntity = function(jsonEntity) {
+    console.log("addToOfflineWaitingList" + jsonEntity);
+    this.addToOfflineWaitingList(jsonEntity);
+    this.changeOnlineStatus(false);
+  }
+  
+  
+  /**
+   * Called when the user got offline.
+   */
+  this.changeOnlineStatus = function(isOnline) {
+    if (isOnline) {
+      $('#onLineStatus').css('background-color', 'green');
+      $('#onLineStatus').text("online");
+      this.shouldCheckOnline = false;
+    } else {
+      $('#onLineStatus').css('background-color', 'red');
+      $('#onLineStatus').text("offline");
+      this.shouldCheckOnline = true;
+    }
+  }
+  
+  
   
   /**
    * @param {JSON} jsonEntity
@@ -59,24 +133,38 @@ var DATABASE_MANAGER = new (function() {
    */
   this.updateSynchLogo = function() {
     var offlineWaitingList = localStorage["offlineWaitingList" + MODEL_NAME];
-    if (offlineWaitingList.length == 0) {
+    if (!offlineWaitingList || offlineWaitingList.length == 0) {
       $('#synchronizedLogo').css('background-color', 'green');
+      $('#synchronizedLogo').html("Synchronized online");
     } else {
       $('#synchronizedLogo').css('background-color', 'red');
+      $('#synchronizedLogo').html("Not Synchronized");
     }
   }
   
   
   /**
-   * 
+   * Launches a synchronization while retrieving the network.
    */
   this.launchOfflineWaitingListSynchronization = function() {
     // TODO() : parses all local Storage key to look all offlineWainting list. 
     var offlineWaitingList = localStorage["offlineWaitingList" + MODEL_NAME];
+    if (!offlineWaitingList || offlineWaitingList.length == 0) {
+      return;
+    }
+    // TODO Should be a POST, verify everywhere else!!!
     $.get("updateEntities?entitiesJson=" + offlineWaitingList,
-        function() {
-      console.log("offlineWaitingList updateEntities Done");
-    })
+        this.callbackWaitingListSynchronization.bind(this));
+  }
+  
+  
+  /**
+   * Launches a synchronization while retrieving the network.
+   */
+  this.callbackWaitingListSynchronization = function() {
+    console.log("offlineWaitingList updateEntities Done");
+    localStorage["offlineWaitingList" + MODEL_NAME] = [];
+    this.updateSynchLogo();
   }
   
   
@@ -154,13 +242,15 @@ var DATABASE_MANAGER = new (function() {
     allDatas = undefined;
     if (allDatas) {
       this.buildTableFromJsonString(allDatas);
+      this.changeOnlineStatus(true);
     } else {
-      $.get("getEntities?EntityName=" + MODEL_NAME,
-          this.buildTableFromJsonString.bind(this));
+      $.ajax({
+        url: "getEntities?EntityName=" + MODEL_NAME,
+      })
+      .done(this.buildTableFromJsonString.bind(this))
     }
+    this.updateSynchLogo();
   }
-  
-  
-  
-  
+
+  this.init();
 })

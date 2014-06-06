@@ -10,6 +10,7 @@
 <html <%--manifest="manifest.mf" --%>>
   <head>
     <title>Offline / Online App</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no">
     <link rel="stylesheet" type="text/css" href="static/css/bootstrap.css" />
     <link rel="stylesheet" type="text/css" href="static/css/style.css" /> 
   </head>
@@ -30,9 +31,15 @@
     </script>
     
     <div id="header">
-      <div id="synchronizedLogo">
-      Synchronized
+      <div id="rightHeader">
+        <span id="onLineStatus">
+          onLine
+        </span>
+        <span id="synchronizedLogo">
+	        Synchronized
+	      </span>
       </div>
+
     </div>
     
     <div id="content">
@@ -86,7 +93,7 @@
     <script src="static/js/main.js"></script>
     <script src="static/js/Table.js"></script>
     <script src="static/js/Form.js"></script>    
-    <script src="static/js/DataBaseManager.js"></script>
+    <script src="static/js/DBManager.js"></script>
   </body>
 
 </html>

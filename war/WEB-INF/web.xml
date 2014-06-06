@@ -78,6 +78,15 @@
     <url-pattern>/updateEntities</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>CheckOnline</servlet-name>
+    <servlet-class>CheckOnlineServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>CheckOnline</servlet-name>
+    <url-pattern>/checkOnline</url-pattern>
+  </servlet-mapping>
   
   <mime-mapping>
     <extension>mf</extension>

@@ -30,7 +30,7 @@ function Table() {
 		this.tableEl.addClass("table table-striped table-bordered table-condensed");
 		this.modelName = datas[0][this.entityKindPropertyName];
 		var caption = $('<caption></caption>');
-		caption.text(this.modelName)
+		caption.html("<h2>" + this.modelName + "s</h2>")
 		this.tableEl.append(caption);
 		
 		var headLine = $('<tr></tr>');
@@ -81,18 +81,15 @@ function Table() {
 	    dataLine.push(tdElements[i].innerHTML);
 	  }
 	  
-	  var formElement = form.buildForm(this.headKeys, MODEL_NAME,
-	      key, dataLine);
 	  
-	  $("#updateModal .modal-body").append(formElement);
+	  form.buildForm(this.headKeys, MODEL_NAME,
+	      key, dataLine);
 	  form.bindUpdateClickButton("#updateModal .saveChange");
 	  
 	  $("#updateModal .modal-body").html("Let's update entity with key " + key);
-	  $("#updateModal .modal-body").append(formElement);
+	  $("#updateModal .modal-body").append(form.form);
 	  $("#updateModal").modal();
 	}
-	
-	
 	
 	
 	/**

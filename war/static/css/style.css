@@ -12,13 +12,21 @@ body {
 	cursor: pointer;
 }
 
-#synchronizedLogo {
+#rightHeader {
 	position: absolute;
 	top: 0px;
 	right: 0px;
-	background-color: green;
 	min-width: 20px;
-	min-height: 20px;
+  min-height: 20px;
+  color: white;
+}
+
+#synchronizedLogo {
+  background-color: green;
 	padding: 5px;
-	color: white;
+}
+
+#onLineStatus {
+	padding: 5px;
+	background-color: green;
 }
