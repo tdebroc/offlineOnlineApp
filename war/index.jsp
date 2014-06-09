@@ -41,7 +41,7 @@ Generated on  <%=d.toLocaleString() %>
     
     <div id="header">
       <div id="rightHeader">
-        <span id="launchFullSynch">
+        <span id="launchFullSynch" class="btn btn-primary">
           Launch Full Synch
         </span>
         <span id="onLineStatus">
@@ -55,7 +55,12 @@ Generated on  <%=d.toLocaleString() %>
     </div>
     
     <div id="content">
-      
+      <div id="tableContainer">
+      </div>
+      <button id="generateNewRandomEntity" class="btn btn-primary"
+          data-toggle="modal" data-target="#generateEntityModal">
+        Generate New random Entity
+      </button>
     </div>
     
     
@@ -78,22 +83,24 @@ Generated on  <%=d.toLocaleString() %>
       </div>
     </div>
     
-    <button class="btn btn-primary"
-      data-toggle="modal" data-target="#insertModal">Add</button>
     
-    <div id="insertModal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    
+    <div id="generateEntityModal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
 		        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		        <h4 class="modal-title">Insert New Entity</h4>
+		        <h4 class="modal-title">Insert New Random Entity</h4>
 		      </div>
 		      <div class="modal-body">
 		        <p>Insert a new random entity ?</p>
+		        Be careful, for the moment, it won't work across several clients.
+		        So to receive the entity on another client, you will need to
+		        click on "Launch Full Synch".
 		      </div>
 		      <div class="modal-footer">
 		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-		        <button type="button" class="btn btn-primary">Insert</button>
+		        <button type="button" class="btn btn-primary">Generate</button>
 		      </div>
 
         </div>

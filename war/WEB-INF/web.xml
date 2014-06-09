@@ -14,18 +14,7 @@
   <servlet-mapping>
     <servlet-name>getOrdersServlet</servlet-name>
     <url-pattern>/getOrders</url-pattern>
-  </servlet-mapping>
-  
-  <servlet>
-    <servlet-name>generateRandomOrder</servlet-name>
-    <servlet-class>GenerateRandomOrderServlet</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>generateRandomOrder</servlet-name>
-    <url-pattern>/generateRandomOrder</url-pattern>
-  </servlet-mapping>
-  
+  </servlet-mapping>  
   
    <servlet>
     <servlet-name>generateDefaultEntitiesServlet</servlet-name>
@@ -47,6 +36,7 @@
     <url-pattern>/getEntities</url-pattern>
   </servlet-mapping>
   
+  
   <servlet>
     <servlet-name>getEntityServlet</servlet-name>
     <servlet-class>GetEntityServlet</servlet-class>
@@ -55,6 +45,17 @@
   <servlet-mapping>
     <servlet-name>getEntityServlet</servlet-name>
     <url-pattern>/getEntity</url-pattern>
+  </servlet-mapping>
+  
+  
+  <servlet>
+    <servlet-name>removeEntityServlet</servlet-name>
+    <servlet-class>RemoveEntityServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>removeEntityServlet</servlet-name>
+    <url-pattern>/removeEntity</url-pattern>
   </servlet-mapping>
   
   

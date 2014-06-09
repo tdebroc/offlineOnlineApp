@@ -1,10 +1,12 @@
 
 
 
-function Form() {
+function Form(dbManager) {
   
   /* {$} Form Element. */
   this.form;
+  /* {DBManager} DBManager handling datas with the form. */
+  this.dbManager = dbManager;
   
   /**
    * 
@@ -62,8 +64,7 @@ function Form() {
    */
   this.launchesUpdate = function() {
     console.log("launches Updates : " + JSON.stringify(this.serializeForm()));
-    // TODO : global variable for dataBaseManager has to be changed...
-    dataBaseManager.updateEntity(this.serializeForm());
+    this.dbManager.updateEntity(this.serializeForm());
     // TODO : this shouldn't be here : an event will be better.
     $('.cancelSaveChange').click();
   }

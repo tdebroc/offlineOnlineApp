@@ -20,7 +20,8 @@ function Table() {
   var removeButtonClass = "deleteButton";
   /* {Array[String]} Array with all header for the table. */
   this.headKeys;
-  
+  /* {DBManager} DBManager handling datas with the form. */
+  this.dbManager;
 
   /**
 	 * Initializes the table and displays it.
@@ -69,6 +70,8 @@ function Table() {
 	      this.handleClickUpdate.bind(this));
 	  this.tableEl.on( "click", "." + removeButtonClass,
         this.handleClickRemove.bind(this));
+	  $(document).on( "click", "#generateEntityModal .btn-primary",
+        this.handleConfirmClickInsert.bind(this));
 	}
 	
 	/**
@@ -85,7 +88,29 @@ function Table() {
     $("#removeModal .modal-body").html("The entity has key : " + key);
     $("#removeModal .modal-body").append(input);
     $("#removeModal").modal();
+    
+    $("#removeModal").click(this.removeButtonCallback.bind(this));
 	}
+	
+	
+	/**
+	 * Callback for a click on the confirmation remove button.
+	 */
+	this.removeButtonCallback = function() {
+	  var key = $("#removeModal .modal-body input[name='key']").val();
+	  console.log("delete entity with key " + key);
+	  $('#removeModal').modal('hide');
+	  this.dbManager.removeEntity(key);
+	}
+	
+
+	/**
+	 * Handles confirm click on insert new entity.
+	 */
+	this.handleConfirmClickInsert = function() {
+	  this.dbManager.generateRandomEntity();
+	}
+	
 	
 	/**
 	 * Handles click on update button.
@@ -94,13 +119,11 @@ function Table() {
 	  var tableLine = $(e.currentTarget).closest('tr');
 	  var tdElements = tableLine.find('td');
 	  var key = tableLine.attr('data-key');
-	  var form = new Form();
+	  var form = new Form(this.dbManager);
 	  var dataLine = [];
 	  for (var i = 0; i < tdElements.length; i++) {
 	    dataLine.push(tdElements[i].innerHTML);
 	  }
-	  
-	  
 	  form.buildForm(this.headKeys, MODEL_NAME,
 	      key, dataLine);
 	  form.bindUpdateClickButton("#updateModal .saveChange");

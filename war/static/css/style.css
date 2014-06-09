@@ -29,3 +29,7 @@ body {
   margin-right: 5px;
   background-color: green;
 }
+
+#launchFullSynch {
+	cursot: pointer;
+}
