@@ -33,7 +33,8 @@ function Table() {
 		this.tableEl.addClass("table table-striped table-bordered table-condensed table-curved");
 		this.modelName = datas[0][this.entityKindPropertyName];
 		var caption = $('<caption></caption>');
-		caption.html("<h2>" + this.modelName + "s</h2>")
+		caption.html("<h2>" + this.modelName + "s (" + 
+		    datas.length + " elements)</h2>")
 		this.tableEl.append(caption);
 		
 		var headLine = $('<tr></tr>');
@@ -89,7 +90,7 @@ function Table() {
     $("#removeModal .modal-body").append(input);
     $("#removeModal").modal();
     
-    $("#removeModal").click(this.removeButtonCallback.bind(this));
+    $("#removeModal .btn-primary").click(this.removeButtonCallback.bind(this));
 	}
 	
 	

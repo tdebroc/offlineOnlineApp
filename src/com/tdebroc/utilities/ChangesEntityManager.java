@@ -24,9 +24,23 @@ public class ChangesEntityManager {
   /**
    * Record the change in the table of Changes.
    * @param entityJson {JsonObject}
+   * @param changeType {String} The type of the change (delete | update | insert)
    * @return {Long} Current version of database.
    */
   public static Long recordChange(JsonObject entityJson, String changeType) {
+    return recordChange(entityJson, changeType,
+        entityJson.get(EntityConstant.ENTITY_KIND_PROPERTY_NAME).getAsString());
+  }
+  
+  
+  /**
+   * Record the change in the table of Changes.
+   * @param entityJson {JsonObject}
+   * @param changeType {String} The type of the change (delete | update | insert)
+   * @return {Long} Current version of database.
+   */
+  public static long recordChange(JsonObject entityJson, String changeType,
+      String entityKind) {
     Date date = new Date();
     long timeStampDBVersion = date.getTime();
     Entity entityChange = new Entity("Changes");
@@ -35,8 +49,7 @@ public class ChangesEntityManager {
         timeStampDBVersion);
     entityChange.setProperty("entityJson", entityJson.toString());
     entityChange.setProperty("changeType", changeType);
-    entityChange.setProperty("entityKind",
-        entityJson.get(EntityConstant.ENTITY_KIND_PROPERTY_NAME).getAsString());
+    entityChange.setProperty("entityKind", entityKind);
     
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(entityChange);
@@ -106,6 +119,9 @@ public class ChangesEntityManager {
     
     return allChangesEntities;
   }
+
+
+  
   
   
 

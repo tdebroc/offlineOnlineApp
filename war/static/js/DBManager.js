@@ -18,7 +18,6 @@ function DataBaseManager(modelName) {
   this.init = function() {
     this.checkSynchronization();
   }
-  this.init();
 
 
 //=============================================================================
@@ -54,15 +53,22 @@ function DataBaseManager(modelName) {
     if (changesDatas.length == 0) {
       return;
     }
-    var allChanges = [];
+    var allUpdateChanges = [];
+    var allRemoveChanges = [];
     for (var i = 0; i < changesDatas.length; i++) {
       var change = changesDatas[i];
-      allChanges.push(
-          JSON.parse(change["entityJson"]));
+      if (change['changeType'] == "update") {
+        allUpdateChanges.push(
+            JSON.parse(change["entityJson"]));
+      } else if (change['changeType'] == "delete") {
+        allRemoveChanges.push(
+            JSON.parse(change["entityJson"]));
+      }
       this.setTimeStampDBVersion(MODEL_NAME,
           change[ENTITY_CHANGES_TIMESTAMP_PROPERTY_NAME])
     }
-    this.updateLocalDBWithArray(allChanges);
+    this.updateLocalDBWithArray(allUpdateChanges);
+    this.applyRemoveChangesLocalDBWithArray(allRemoveChanges);
   }
   
   
@@ -237,6 +243,9 @@ function DataBaseManager(modelName) {
    * @param {JsonArray} jsonEntities
    */
   this.updateLocalDBWithArray = function(jsonEntities) {
+    if (jsonEntities.length == 0) {
+      return;
+    }
     var modelName = jsonEntities[0][ENTITY_KIND_PROPERTY_NAME];
     var entities = this.getJSONEntitiesFromLocalStorage(modelName);
     // TODO: Improves perfs here by an hashmap containing lines to udpate.
@@ -254,7 +263,7 @@ function DataBaseManager(modelName) {
   }
 
 //=============================================================================
-// Random Generation Management.  
+// Random Generation Management.
 //=============================================================================
   /**
    * Generates a random entity in backend and launches full synch.
@@ -279,7 +288,8 @@ function DataBaseManager(modelName) {
    * @param key {String}
    */
   this.removeEntity = function(key) {
-    $.ajax({'url' : "removeEntity?entityKey=" + key})
+    $.ajax({'url' : "removeEntity?entityKey=" + key +
+        "&entityKind=" + MODEL_NAME})
       .done(this.removeEntitySuccess.bind(this))
       .fail(this.removeEntityFailure.bind(this));
     this.removeEntityFromLocalDB(key);
@@ -290,14 +300,31 @@ function DataBaseManager(modelName) {
    * Removes an entity from the local DB.
    */
   this.removeEntityFromLocalDB = function(key) {
+    var jsonEntity = {};
+    jsonEntity[ENTITY_KEY_PROPERTY_NAME] = key;
+    var removeChanges = [jsonEntity];
+    this.applyRemoveChangesLocalDBWithArray(removeChanges);
+  }
+  
+  
+  /**
+   * Apply removes changes on local DB.
+   */
+  this.applyRemoveChangesLocalDBWithArray = function(removeChangeArray) {
+    if (removeChangeArray.length == 0) {
+      return;
+    }
     var modelName = MODEL_NAME;
     var entities = this.getJSONEntitiesFromLocalStorage(modelName);
-    for (var i = 0, removed = false; i < entities.length && !removed; i++) {
-      var jsonEntity = entities[i];
-      var entityKey = jsonEntity[ENTITY_KEY_PROPERTY_NAME];
-      if (key == entityKey) {
-        entities.splice(i, 1);
-        removed = true;
+    for (var j = 0; j < removeChangeArray.length; j++) {
+      var removeChange = removeChangeArray[j];
+      for (var i = 0, removed = false; i < entities.length && !removed; i++) {
+        var jsonEntity = entities[i];
+        var entityKey = jsonEntity[ENTITY_KEY_PROPERTY_NAME];
+        if (removeChange[ENTITY_KEY_PROPERTY_NAME] == entityKey) {
+          entities.splice(i, 1);
+          removed = true;
+        }
       }
     }
     this.buildTableFromJson(entities);
@@ -396,4 +423,5 @@ function DataBaseManager(modelName) {
     this.buildTableFromJson(data['entities']);
   }
 
+  this.init();
 }

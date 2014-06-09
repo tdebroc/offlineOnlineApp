@@ -1,14 +1,14 @@
-<!-- Indices written at Mon, 9 Jun 2014 21:03:50 CEST -->
+<!-- Indices written at Mon, 9 Jun 2014 23:05:24 CEST -->
 
 <datastore-indexes>
 
-    <!-- Used 171 times in query history -->
+    <!-- Used 704 times in query history -->
     <datastore-index kind="Changes" ancestor="false" source="auto">
         <property name="entityKind" direction="asc"/>
         <property name="timestampDBVersion" direction="asc"/>
     </datastore-index>
 
-    <!-- Used 3 times in query history -->
+    <!-- Used 38 times in query history -->
     <datastore-index kind="Changes" ancestor="false" source="auto">
         <property name="entityKind" direction="asc"/>
         <property name="timestampDBVersion" direction="desc"/>

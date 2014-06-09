@@ -22,7 +22,7 @@
   <%
     Date d = new Date();
   %>
-Generated on  <%=d.toLocaleString() %>
+index.jsp Generated on  <%=d.toLocaleString() %>
     <%
       String modelName = request.getParameter("modelName");;
         if (modelName == null) {
@@ -41,9 +41,9 @@ Generated on  <%=d.toLocaleString() %>
     
     <div id="header">
       <div id="rightHeader">
-        <span id="launchFullSynch" class="btn btn-primary">
+        <button id="launchFullSynch" class="btn btn-primary">
           Launch Full Synch
-        </span>
+        </button>
         <span id="onLineStatus">
           onLine
         </span>
@@ -56,6 +56,7 @@ Generated on  <%=d.toLocaleString() %>
     
     <div id="content">
       <div id="tableContainer">
+       Please Wait..
       </div>
       <button id="generateNewRandomEntity" class="btn btn-primary"
           data-toggle="modal" data-target="#generateEntityModal">
