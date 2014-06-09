@@ -2,6 +2,6 @@ offlineOnlineApp
 ================
 
 
-Application handeling Synchronization of entities (GoogleAppengine objects) online and offline.
+Web Application handling Synchronization of entities of a datastore online and offline and across several clients.
 
 
