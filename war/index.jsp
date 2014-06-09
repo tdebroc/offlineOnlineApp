@@ -69,6 +69,17 @@
 		        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 		        <h4 class="modal-title">Insert New Entity</h4>
 		      </div>
+		      <form id ="add-new-entity" action="generateNewEntityServlet" method="GET">
+		      <div class="form-group">
+		      	<strong> Entity Name : </strong><input class='form-control' type="text" name="entityName" >
+		      	Property Name : <input class='form-control' type="text" name="propertyName">
+		      	Type : <input class='form-control' type="text" name="type">
+		      	Minimum Value : <input class='form-control' type="text" name="minVal">
+		      	Minimum Value : <input class='form-control' type="text" name="maxVal">
+		      	<button class="addPropertyField btn btn-default">+</button>
+		      	<input id="new" class="btn btn-default" type="submit" value="Submit new entity" />
+		      	 </div>
+		      </form>
 		      <div class="modal-body">
 		        <p>Insert a new random entity ?</p>
 		      </div>
@@ -80,13 +91,20 @@
         </div>
       </div>
     </div>
-    
     <script src="static/js/jquery-2.1.1.js"></script>
     <script  src="static/js/bootstrap.js"></script>
+    <script src="static/js/DataBaseManager.js"></script>
     <script src="static/js/main.js"></script>
     <script src="static/js/Table.js"></script>
-    <script src="static/js/Form.js"></script>    
-    <script src="static/js/DataBaseManager.js"></script>
+    <script src="static/js/Form.js"></script>   
+    <script>
+    	var jsonArray;
+    	$.get("getEntities", function(data){
+    		jsonArray = data;
+    	});
+    	alert(jsonArray);
+    </script>	 
+    
   </body>
 
 </html>
