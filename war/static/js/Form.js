@@ -62,7 +62,8 @@ function Form() {
    */
   this.launchesUpdate = function() {
     console.log("launches Updates : " + JSON.stringify(this.serializeForm()));
-    DATABASE_MANAGER.updateEntity(this.serializeForm());
+    // TODO : global variable for dataBaseManager has to be changed...
+    dataBaseManager.updateEntity(this.serializeForm());
     // TODO : this shouldn't be here : an event will be better.
     $('.cancelSaveChange').click();
   }

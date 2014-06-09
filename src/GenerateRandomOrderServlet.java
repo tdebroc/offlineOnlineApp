@@ -23,7 +23,7 @@ public class GenerateRandomOrderServlet extends HttpServlet {
   public void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws IOException, ServletException {
 
-	    Entity order = new Entity("Order");
+	    Entity order = new Entity("Product");
 	    Date date = new Date();
 	    order.setProperty("date", date);
 	    order.setProperty("price", Math.round(Math.random() * (maxPrice - minPrice) + minPrice));

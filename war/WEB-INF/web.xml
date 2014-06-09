@@ -79,14 +79,25 @@
   </servlet-mapping>
   
   <servlet>
-    <servlet-name>CheckOnline</servlet-name>
-    <servlet-class>CheckOnlineServlet</servlet-class>
+    <servlet-name>CheckSynchronization</servlet-name>
+    <servlet-class>CheckSynchronizationServlet</servlet-class>
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>CheckOnline</servlet-name>
-    <url-pattern>/checkOnline</url-pattern>
+    <servlet-name>CheckSynchronization</servlet-name>
+    <url-pattern>/checkSynchronization</url-pattern>
   </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>GenerateRandomEntity</servlet-name>
+    <servlet-class>GenerateRandomEntityServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>GenerateRandomEntity</servlet-name>
+    <url-pattern>/generateRandomEntity</url-pattern>
+  </servlet-mapping>
+  
   
   <mime-mapping>
     <extension>mf</extension>

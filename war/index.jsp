@@ -3,11 +3,14 @@
 <%@ page import="com.google.appengine.api.users.UserService" %>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
 <%@ page import="com.tdebroc.utilities.JsonUtilities" %>
-<%@ page import="java.util.List" %>
+<%@ page import="com.tdebroc.utilities.EntityConstant" %>
+<%@ page import="java.util.*" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE HTML>
-<html manifest="manifest.mf" >
+<html 
+<%-- manifest="manifest.mf" --%>
+>
   <head>
     <title>Offline / Online App</title>
     <meta name="viewport" content="width=device-width, user-scalable=no">
@@ -16,6 +19,10 @@
   </head>
   
   <body>
+  <%
+    Date d = new Date();
+  %>
+Generated on  <%=d.toLocaleString() %>
     <%
       String modelName = request.getParameter("modelName");;
         if (modelName == null) {
@@ -26,12 +33,17 @@
       // TODO : "ModelName" is bad naming convention, to change everywhere with 
       // "EntityKind"
       var MODEL_NAME = "<%=modelName%>";
-      var ENTITY_KIND_PROPERTY_NAME = "<%=JsonUtilities.ENTITY_KIND_PROPERTY_NAME%>";
-      var ENTITY_KEY_PROPERTY_NAME = "<%=JsonUtilities.ENTITY_KEY_PROPERTY_NAME%>";
+      var ENTITY_KIND_PROPERTY_NAME = "<%=EntityConstant.ENTITY_KIND_PROPERTY_NAME%>";
+      var ENTITY_KEY_PROPERTY_NAME = "<%=EntityConstant.ENTITY_KEY_PROPERTY_NAME%>";
+      var ENTITY_CHANGES_TIMESTAMP_PROPERTY_NAME = 
+          "<%=EntityConstant.ENTITY_CHANGES_TIMESTAMP_PROPERTY_NAME %>";
     </script>
     
     <div id="header">
       <div id="rightHeader">
+        <span id="launchFullSynch">
+          Launch Full Synch
+        </span>
         <span id="onLineStatus">
           onLine
         </span>
@@ -81,8 +93,27 @@
 		      </div>
 		      <div class="modal-footer">
 		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-		        <button type="button" class="btn btn-primary">Save changes</button>
+		        <button type="button" class="btn btn-primary">Insert</button>
 		      </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div id="removeModal" class="modal fade bs-example-modal-lg" tabindex="-1"
+        role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Are you sure you want to delete this entity ?</h4>
+          </div>
+          <div class="modal-body">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary btn-danger">Delete</button>
+          </div>
 
         </div>
       </div>

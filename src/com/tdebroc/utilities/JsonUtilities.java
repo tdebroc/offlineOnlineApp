@@ -16,10 +16,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class JsonUtilities {
-  /* Name of the property designing the kind of an entity. */
-	public final static String ENTITY_KIND_PROPERTY_NAME = "EntityKind";
-	/* Name of the property designing the key of an entity. */
-	public final static String ENTITY_KEY_PROPERTY_NAME = "key";
+  
 	/* Set containing all keys invisible for user. */
 	private static Set<String> invisibleKeys;
 
@@ -30,8 +27,8 @@ public class JsonUtilities {
 	public static Set<String> getInvisibleKeys() {
 	  if (invisibleKeys == null) {
 	    invisibleKeys = new HashSet<String>();
-	    invisibleKeys.add(ENTITY_KEY_PROPERTY_NAME);
-	    invisibleKeys.add(ENTITY_KIND_PROPERTY_NAME);
+	    invisibleKeys.add(EntityConstant.ENTITY_KEY_PROPERTY_NAME);
+	    invisibleKeys.add(EntityConstant.ENTITY_KIND_PROPERTY_NAME);
 	  }
 	  return invisibleKeys;
 	}
@@ -52,7 +49,7 @@ public class JsonUtilities {
 		Map<String, Object> properties = entity.getProperties();
 		
 		JsonObject jsonObject = new JsonObject();
-		jsonObject.addProperty(ENTITY_KIND_PROPERTY_NAME, entity.getKind());
+		jsonObject.addProperty(EntityConstant.ENTITY_KIND_PROPERTY_NAME, entity.getKind());
 		jsonObject.addProperty("key", KeyFactory.keyToString(entity.getKey()));
 		
 		Iterator<String> iterator = properties.keySet().iterator();
@@ -63,48 +60,48 @@ public class JsonUtilities {
 		return jsonObject;
 	}
 
+
 	/**
 	 * Updates a datastore entity from it's JSON.
 	 * @param entityJson
 	 * @return {Boolean} Whether the update had worked or not.
 	 */
-	public static boolean  updateEntityFromJson(JsonObject entityJson) {
-	  String keyString = entityJson.get(JsonUtilities.ENTITY_KEY_PROPERTY_NAME).getAsString();
+	public static long updateEntityFromJson(JsonObject entityJson) {
+	  String keyString = entityJson.get(EntityConstant.ENTITY_KEY_PROPERTY_NAME).getAsString();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Key key = KeyFactory.stringToKey(keyString);
-    
     try {
       Entity entity = datastore.get(key);
       Set<String> invisiblesKeys = JsonUtilities.getInvisibleKeys();
       for (Map.Entry<String,JsonElement> entry : entityJson.entrySet()) {
         String propertyName = entry.getKey();
         if (!invisiblesKeys.contains(propertyName)) {
-          entity.setProperty(propertyName, entry.getValue().getAsString());            
+          entity.setProperty(propertyName, entry.getValue().getAsString());
         }
-  
       }
       datastore.put(entity);
-      return true;
+
+      return ChangesEntityManager.recordChange(entityJson, "update");
     } catch (EntityNotFoundException e) {
       e.printStackTrace();
-      return false;
+      return -1;
     }
 	}
-
+	
 	
 	/**
    * Updates several datastore entities from a JSON array containing them.
    * @param entitiesJsonArray {JsonArray}
    * @return {Boolean} Whether the update had worked or not.
    */
-  public static boolean updateEntitiesFromJson(JsonArray entitiesJsonArray) {
+  public static Long updateEntitiesFromJson(JsonArray entitiesJsonArray) {
     Iterator<JsonElement> entititiesIterator = entitiesJsonArray.iterator();
-    
+    long timeStamp = -1;
     while (entititiesIterator.hasNext()) {
       JsonElement jsonElement = entititiesIterator.next();
-      updateEntityFromJson(jsonElement.getAsJsonObject());
+      timeStamp = updateEntityFromJson(jsonElement.getAsJsonObject());
     }
-    return true;
+    return timeStamp;
   }
 	
   

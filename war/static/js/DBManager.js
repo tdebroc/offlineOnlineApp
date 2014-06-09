@@ -2,47 +2,70 @@
 /**
  * Class managing AJAX synchronization.
  */
-var DATABASE_MANAGER = new (function() {
+function DataBaseManager(modelName) {
   /* {Boolean} Whether user is online. */  
   this.isOnline = false;
   /* {Boolean} Whether database Manager should check if online. */  
   this.shouldCheckOnline = false;
   /* {Number} checkOnlineDelay. */
   var checkOnlineDelay = 2000;
+  /* {String} Name of the entity kind currently managed. */
+  this.modelName = modelName;
   
   /**
    * Initializes Database Manager.
    */
   this.init = function() {
-    this.checkOnline();
+    this.checkSynchronization();
   }
   
   
   /**
    * Checks online status.
    */
-  this.checkOnline = function() {
-    $.ajax({'url' : "checkOnline"})
-        .done(this.successIsOnline.bind(this))
-        .fail(this.failIsOnline.bind(this));
-    setTimeout(this.checkOnline.bind(this), checkOnlineDelay);
+  this.checkSynchronization = function() {
+    $.ajax({'url' : "checkSynchronization?timestamp="
+        + this.getTimeStampDBVersion(MODEL_NAME) + "&"
+        + "entityKind=" + MODEL_NAME})
+        .done(this.checkSynchronizationSuccess.bind(this))
+        .fail(this.checkSynchronizationFailure.bind(this));
+    setTimeout(this.checkSynchronization.bind(this), checkOnlineDelay);
   }
   
   
   /**
    * Handles success on is online request.
    */
-  this.successIsOnline = function() {
+  this.checkSynchronizationSuccess = function(changesDatas) {
     this.shouldCheckOnline = false;
     this.changeOnlineStatus(true);
+    this.synchronizeLocalDatabase(changesDatas);
     this.launchOfflineWaitingListSynchronization();
+  }
+  
+  /**
+   * @param {JsonArray} 
+   */
+  this.synchronizeLocalDatabase = function(changesDatas) {
+    if (changesDatas.length == 0) {
+      return;
+    }
+    var allChanges = [];
+    for (var i = 0; i < changesDatas.length; i++) {
+      var change = changesDatas[i];
+      allChanges.push(
+          JSON.parse(change["entityJson"]));
+      this.setTimeStampDBVersion(MODEL_NAME,
+          change[ENTITY_CHANGES_TIMESTAMP_PROPERTY_NAME])
+    }
+    this.updateLocalDBWithArray(allChanges);
   }
   
   
   /**
    * Handles failure on is online request.
    */
-  this.failIsOnline = function() {
+  this.checkSynchronizationFailure = function() {
     this.changeOnlineStatus(false);
   }
 
@@ -63,14 +86,16 @@ var DATABASE_MANAGER = new (function() {
         }
       }) (this, jsonEntity)
     );
-    this.updateLocalStorageModel(jsonEntity);
+    this.updateLocalDBWithOneEntity(jsonEntity);
   }
   
   
   /**
    * Callback for the update entity ajax call.
+   * @param {JSON} data Answer from the updateEntity service.
    */
-  this.successUpdateEntity = function() {
+  this.successUpdateEntity = function(data) {
+    this.setTimeStampDBVersion(data['timeStampDBVersion']);
     console.log("update entity is a success");
   }
   
@@ -160,8 +185,10 @@ var DATABASE_MANAGER = new (function() {
   
   /**
    * Launches a synchronization while retrieving the network.
+   * @param {JSON} data Answer from update Entities callback.
    */
-  this.callbackWaitingListSynchronization = function() {
+  this.callbackWaitingListSynchronization = function(data) {
+    this.setTimeStampDBVersion(data['timeStampDBVersion']);
     console.log("offlineWaitingList updateEntities Done");
     localStorage["offlineWaitingList" + MODEL_NAME] = [];
     this.updateSynchLogo();
@@ -169,50 +196,50 @@ var DATABASE_MANAGER = new (function() {
   
   
   /**
-   * Updates localStorage from entity
-   * @param {JSON} jsonEntity
+   * @param {JSON} jsonEntity Answer from update Entities callback.
    */
-  this.updateLocalStorageModel = function(jsonEntity) {
-    var modelName = jsonEntity[ENTITY_KIND_PROPERTY_NAME];
-    var entityKey = jsonEntity[ENTITY_KEY_PROPERTY_NAME];
+  this.updateLocalDBWithOneEntity = function(jsonEntity) {
+    var allChangesArray = [jsonEntity];
+    this.updateLocalDBWithArray(allChangesArray);
+  }
+  
+  
+  /**
+   * Updates localStorage from entity
+   * @param {JsonArray} jsonEntities
+   */
+  this.updateLocalDBWithArray = function(jsonEntities) {
+    var modelName = jsonEntities[0][ENTITY_KIND_PROPERTY_NAME];
     var entities = this.getJSONEntitiesFromLocalStorage(modelName);
-    for (var i = 0; i < entities.length; i++) {
-      if (entities[i][ENTITY_KEY_PROPERTY_NAME] == entityKey) {
-        entities[i] = jsonEntity;
+    for (var i = 0; i < jsonEntities.length; i++) {
+      var jsonEntity = jsonEntities[i];
+      var entityKey = jsonEntity[ENTITY_KEY_PROPERTY_NAME];
+      for (var i = 0; i < entities.length; i++) {
+        if (entities[i][ENTITY_KEY_PROPERTY_NAME] == entityKey) {
+          entities[i] = jsonEntity;
+        }
       }
     }
-    var entitiesString = JSON.stringify(entities);
-    this.buildTableFromJsonString(entitiesString);
-    this.storeDatas(modelName, entitiesString);
-  }
-  
-  
-  /**
-   * Builds the table on the DOM.
-   * @param dataJso {JSON}
-   */
-  this.buildTable = function(dataJson) {
-    var dataJsonString = JSON.stringify(dataJson);
-    this.buildTableFromJsonString(dataJsonString);
+    this.buildTableFromJson(entities);
+    this.storeDatas(modelName, entities);
   }
 
 
   /**
-   * @param dataJsonString {String}
+   * @param dataJson {JSON}
    */
-  this.buildTableFromJsonString = function(dataJsonString) {
+  this.buildTableFromJson = function(dataJson) {
     var table = new Table();
-    table.init("#content", $.parseJSON(dataJsonString));
-    this.storeDatas(MODEL_NAME, dataJsonString);
+    table.init("#content", dataJson);
+    this.storeDatas(MODEL_NAME, dataJson);
   }
 
 
   /**
-   * @param modelName {String}
-   * @param dataJsonString {String}
+   * @param modelName {JSON}
    */
-  this.storeDatas = function(modelName, dataJsonString) {
-    localStorage["allDatas" + modelName] = dataJsonString;
+  this.storeDatas = function(modelName, dataJson) {
+    localStorage["allDatas" + modelName] = JSON.stringify(dataJson);
   }
 
   
@@ -239,18 +266,57 @@ var DATABASE_MANAGER = new (function() {
    */
   this.loadDatas = function() {
     var allDatas = this.getStringEntititesFromLocalStorage(MODEL_NAME);
-    allDatas = undefined;
     if (allDatas) {
-      this.buildTableFromJsonString(allDatas);
+      this.buildTableFromJson($.parseJSON(allDatas));
       this.changeOnlineStatus(true);
     } else {
       $.ajax({
         url: "getEntities?EntityName=" + MODEL_NAME,
       })
-      .done(this.buildTableFromJsonString.bind(this))
+      .done(this.callbackGetAllDatas.bind(this))
     }
     this.updateSynchLogo();
   }
 
+
+  /**
+   * Reloads all Datas.
+   */
+  this.reloadDatas = function() {
+    localStorage.clear();
+    this.loadDatas();
+  }
+  
+  
+  /**
+   * @param {JSON} result from the service to get all Datas.
+   */
+  this.callbackGetAllDatas = function(data) {
+    this.setTimeStampDBVersion(MODEL_NAME, data['timestampDBVersion']);
+    this.buildTableFromJson(data['entities']);
+  }
+  
+  
+  /**
+   * @param  {String} entityKind The entity kind from which we want the db
+   *     version.
+   * @return {Number} the timestamp designing the DB Version.
+   */
+  this.getTimeStampDBVersion = function(entityKind) {
+    var timestamp = localStorage.getItem("TimestampDBVersion-" + entityKind)
+    return timestamp ? timestamp : -1;
+  }
+  
+  
+  /**
+   * @param  {String} entityKind The entity kind from which we want to set
+   * the db version.
+   * @param  {Numbre} the timestamp designing the DB Version
+   */
+  this.setTimeStampDBVersion = function(entityKind, timestampValue) {
+    localStorage.setItem("TimestampDBVersion-" + entityKind, timestampValue)
+  }
+  
+  
   this.init();
-})
+}

@@ -11,6 +11,9 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.tdebroc.utilities.ChangesEntityManager;
+import com.tdebroc.utilities.EntityConstant;
 import com.tdebroc.utilities.JsonUtilities;
 
 public class GetEntitiesServlet extends HttpServlet {
@@ -20,19 +23,30 @@ public class GetEntitiesServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws IOException, ServletException {
-	    String entityName = req.getParameter("EntityName");
-	    
-	    Query q = new Query(entityName);
-	    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-	    PreparedQuery pq = datastore.prepare(q);  
-	    
-	    JsonArray allEntities = new JsonArray();
-	    
-	    for (Entity result : pq.asIterable()) {
-	      allEntities.add(JsonUtilities.entityToJson(result));
-	    }
-	    
-	    resp.setContentType("text/plain");
-        resp.getWriter().println(allEntities);
+    String entityName = req.getParameter("EntityName");
+    
+    Query q = new Query(entityName);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery pq = datastore.prepare(q);  
+    
+    JsonArray allEntities = new JsonArray();
+    
+    for (Entity result : pq.asIterable()) {
+      allEntities.add(JsonUtilities.entityToJson(result));
+    }
+    long timestamp = ChangesEntityManager.getLastTimestamp(entityName);
+
+    JsonObject response = new JsonObject();
+    response.addProperty(
+        EntityConstant.ENTITY_CHANGES_TIMESTAMP_PROPERTY_NAME, timestamp);
+    response.add("entities", allEntities);
+       
+    resp.setContentType("application/json");
+    resp.getWriter().println(response);
   }
 }
+
+
+
+
+

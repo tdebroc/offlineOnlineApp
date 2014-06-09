@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.tdebroc.utilities.EntityConstant;
 import com.tdebroc.utilities.JsonUtilities;
 public class UpdateEntityServlet extends HttpServlet {
   
@@ -19,10 +20,13 @@ public class UpdateEntityServlet extends HttpServlet {
       
       JsonParser jsonParser = new JsonParser();
       JsonObject entityJson = (JsonObject) jsonParser.parse(entityJsonString);
-      boolean hasUpdated = JsonUtilities.updateEntityFromJson(entityJson);
-      
-      resp.setContentType("text/plain");
-      resp.getWriter().println(hasUpdated ? "Entity Updated"
+      long timeStampDBVersion = JsonUtilities.updateEntityFromJson(entityJson);
+
+      JsonObject response = new JsonObject();
+      response.addProperty(
+          EntityConstant.ENTITY_CHANGES_TIMESTAMP_PROPERTY_NAME, timeStampDBVersion);
+      resp.setContentType("application/json");
+      resp.getWriter().println(timeStampDBVersion != -1 ? response
           : "Error While updating");
   }
 }
