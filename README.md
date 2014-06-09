@@ -10,11 +10,17 @@ Prototype for aWeb Application handling Synchronization of entities of a datasto
 http://1-dot-offlineonlinesynchronization.appspot.com/
 
 It's generic for any kind of entities. To demonstrate the genericty, here are 2 others kind of entiyies:
+
 Model is : Clients
+
 http://1-dot-offlineonlinesynchronization.appspot.com/?modelName=Client
+
 Model is : products
+
 http://1-dot-offlineonlinesynchronization.appspot.com/?modelName=Product
+
 Todo: add a service to generate quickly a new entity schema.
+
 
 ## Demo
 - Uses localStorage to store all datas on client side.
