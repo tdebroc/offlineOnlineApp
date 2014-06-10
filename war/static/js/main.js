@@ -6,7 +6,7 @@ xhr = new XMLHttpRequest();
  * Called when DOM has been loaded.
  */
 function loaded() {
-  var dataBaseManager = new DataBaseManager(MODEL_NAME);
+  window.dataBaseManager = new DataBaseManager(MODEL_NAME);
   dataBaseManager.loadDatas();
   $('#launchFullSynch').click(function() {
     dataBaseManager.reloadDatas();
