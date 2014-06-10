@@ -28,6 +28,10 @@ public class GenerateNewEntityServlet extends HttpServlet {
 	}
 	
 	
+	/**
+	 * function to create an entity based on get parameters
+	 * @param req : request that posess required parameters to create new Entity
+	 */
 	public void createEntity(HttpServletRequest req){
 		String entityName = req.getParameter("entityName");
 		

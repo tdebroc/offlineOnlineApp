@@ -58,6 +58,10 @@ index.jsp Generated on  <%=d.toLocaleString() %>
       <div id="tableContainer">
        Please Wait..
       </div>
+      <button id="createNewEntity" class="btn btn-primary"
+          data-toggle="modal" data-target="#newEntityModal">
+        Create new Entity
+      </button>
       <button id="generateNewRandomEntity" class="btn btn-primary"
           data-toggle="modal" data-target="#generateEntityModal">
         Generate New random Entity
@@ -86,29 +90,47 @@ index.jsp Generated on  <%=d.toLocaleString() %>
     
     
     
-    <div id="generateEntityModal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div id="newEntityModal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
 		        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		        <h4 class="modal-title">Insert New Random Entity</h4>
+		        <h4 class="modal-title">Create new Entity</h4>
 		      </div>
+		      <div class="modal-body">
 		      <form id ="add-new-entity" action="generateNewEntityServlet" method="GET">
 		      <div class="form-group">
 		      	<strong> Entity Name : </strong><input class='form-control' type="text" name="entityName" >
-		      	Property Name : <input class='form-control' type="text" name="propertyName">
+		      	<strong> Property Name 1 : </strong><input class='form-control' type="text" name="propertyName">
 		      	Type : <input class='form-control' type="text" name="type">
 		      	Minimum Value : <input class='form-control' type="text" name="minVal">
-		      	Minimum Value : <input class='form-control' type="text" name="maxVal">
-		      	<button class="addPropertyField btn btn-default">+</button>
+		      	Maximum Value : <input class='form-control' type="text" name="maxVal">
+		      	<div id="addPropertyField" class=" btn btn-default">+</div>
 		      	<input id="new" class="btn btn-default" type="submit" value="Submit new entity" />
 		      	 </div>
 		      </form>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		        <button type="button" class="btn btn-primary">Generate</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		   <div id="generateEntityModal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+      	<div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		        <h4 class="modal-title">Create new Entity</h4>
+		      </div>
 		      <div class="modal-body">
 		      <form id="addRandomEntity" action="generateRandomEntity" method="GET">
 		      	<select id="addRandom" name="entityName" class="form-control">
 		      	</select>
 		      	<input id="new" class="btn btn-default" type="submit" value="Generate Random Entity" />
+		      	</form>
+		     
 		        <p>Insert a new random entity ?</p>
 		        Be careful, for the moment, it won't work across several clients.
 		        So to receive the entity on another client, you will need to
@@ -118,6 +140,11 @@ index.jsp Generated on  <%=d.toLocaleString() %>
 		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 		        <button type="button" class="btn btn-primary">Generate</button>
 		      </div>
+		       	</div>
+		    </div>
+		  </div>
+		</div>
+		      
 
         </div>
       </div>
@@ -162,6 +189,7 @@ index.jsp Generated on  <%=d.toLocaleString() %>
     </div>
     <script src="static/js/jquery-2.1.1.js"></script>
     <script  src="static/js/bootstrap.js"></script>
+    <script src="static/js/entityCreationManager.js"></script>  
     <script src="static/js/main.js"></script>
     <script src="static/js/Table.js"></script>
     <script src="static/js/Form.js"></script>   
