@@ -81,6 +81,10 @@
 		      	 </div>
 		      </form>
 		      <div class="modal-body">
+		      <form id="addRandomEntity" action="generateRandomEntity" method="GET">
+		      	<select id="addRandom" name="entityName" class="form-control">
+		      	</select>
+		      	<input id="new" class="btn btn-default" type="submit" value="Generate Random Entity" />
 		        <p>Insert a new random entity ?</p>
 		      </div>
 		      <div class="modal-footer">
@@ -97,14 +101,6 @@
     <script src="static/js/main.js"></script>
     <script src="static/js/Table.js"></script>
     <script src="static/js/Form.js"></script>   
-    <script>
-    	var jsonArray;
-    	$.get("getEntities", function(data){
-    		jsonArray = data;
-    	});
-    	alert(jsonArray);
-    </script>	 
-    
   </body>
 
 </html>

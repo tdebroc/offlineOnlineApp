@@ -8,6 +8,7 @@ var compteur = 0;
 function loaded() {
   DATABASE_MANAGER.loadDatas();
   addFieldButton();
+  addSelectFieldFromServlet();
 }
 
 /**
@@ -53,3 +54,29 @@ var buildInput = function(type, name, textToPrepend, textToAppend){
 	input.addClass('form-control');
 	return input;
 }
+
+
+/**
+*
+*/
+
+var addSelectFieldFromServlet = function(){
+	var jsonArray;
+	var entityArray = [];
+	$.get("getEntities", function(data){
+		jsonArray = $.parseJSON(data);
+	}).done(function(){$.each(jsonArray, function() {
+		entityArray.push(this.EntityKind); 
+		});});
+	$(document).ajaxStop(function() {
+		entityArray = $.unique(entityArray);
+		$.each(entityArray,function() {
+			var opt = $("<option></option>");
+			opt.attr("value",this);
+			opt.html(this);
+			$("#addRandom").append(opt);
+		})
+	});
+	
+}
+
