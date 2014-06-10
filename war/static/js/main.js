@@ -11,7 +11,7 @@ function loaded() {
   $('#launchFullSynch').click(function() {
     dataBaseManager.reloadDatas();
   })
-  addFieldForNewEntity();
+  addFieldButton();
   addSelectFieldFromServlet();
 }
   
