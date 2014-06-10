@@ -16,9 +16,12 @@ function Table() {
 	var propertiesNotDisplayed = [this.entityKindPropertyName, this.entityKeyPropertyName];
 	/* {String} Class for update button . */
   var updateButtonClass = "updateButton";
+  /* {String} Class for remove button . */
+  var removeButtonClass = "deleteButton";
   /* {Array[String]} Array with all header for the table. */
   this.headKeys;
-  
+  /* {DBManager} DBManager handling datas with the form. */
+  this.dbManager;
 
   /**
 	 * Initializes the table and displays it.
@@ -27,10 +30,11 @@ function Table() {
 	 */
 	this.init = function(parentSelector, datas) {
 		this.tableEl = $('<table></table>');
-		this.tableEl.addClass("table table-striped table-bordered table-condensed");
+		this.tableEl.addClass("table table-striped table-bordered table-condensed table-curved");
 		this.modelName = datas[0][this.entityKindPropertyName];
 		var caption = $('<caption></caption>');
-		caption.text(this.modelName)
+		caption.html("<h2>" + this.modelName + "s (" + 
+		    datas.length + " elements)</h2>")
 		this.tableEl.append(caption);
 		
 		var headLine = $('<tr></tr>');
@@ -65,6 +69,47 @@ function Table() {
 	this.initListeners = function() {
 	  this.tableEl.on( "click", "." + updateButtonClass,
 	      this.handleClickUpdate.bind(this));
+	  this.tableEl.on( "click", "." + removeButtonClass,
+        this.handleClickRemove.bind(this));
+	  $(document).on( "click", "#generateEntityModal .btn-primary",
+        this.handleConfirmClickInsert.bind(this));
+	}
+	
+	/**
+	 * Handles click on remove
+	 */
+	this.handleClickRemove = function(e) {
+	  var tableLine = $(e.currentTarget).closest('tr');
+    var tdElements = tableLine.find('td');
+    var key = tableLine.attr('data-key');
+    var input = $('<input/>');
+    input.attr('type', 'hidden');
+    input.val(key);
+    input.attr('name', 'key');
+    $("#removeModal .modal-body").html("The entity has key : " + key);
+    $("#removeModal .modal-body").append(input);
+    $("#removeModal").modal();
+    
+    $("#removeModal .btn-primary").click(this.removeButtonCallback.bind(this));
+	}
+	
+	
+	/**
+	 * Callback for a click on the confirmation remove button.
+	 */
+	this.removeButtonCallback = function() {
+	  var key = $("#removeModal .modal-body input[name='key']").val();
+	  console.log("delete entity with key " + key);
+	  $('#removeModal').modal('hide');
+	  this.dbManager.removeEntity(key);
+	}
+	
+
+	/**
+	 * Handles confirm click on insert new entity.
+	 */
+	this.handleConfirmClickInsert = function() {
+	  this.dbManager.generateRandomEntity();
 	}
 	
 	
@@ -75,24 +120,19 @@ function Table() {
 	  var tableLine = $(e.currentTarget).closest('tr');
 	  var tdElements = tableLine.find('td');
 	  var key = tableLine.attr('data-key');
-	  var form = new Form();
+	  var form = new Form(this.dbManager);
 	  var dataLine = [];
 	  for (var i = 0; i < tdElements.length; i++) {
 	    dataLine.push(tdElements[i].innerHTML);
 	  }
-	  
-	  var formElement = form.buildForm(this.headKeys, MODEL_NAME,
+	  form.buildForm(this.headKeys, MODEL_NAME,
 	      key, dataLine);
-	  
-	  $("#updateModal .modal-body").append(formElement);
 	  form.bindUpdateClickButton("#updateModal .saveChange");
 	  
 	  $("#updateModal .modal-body").html("Let's update entity with key " + key);
-	  $("#updateModal .modal-body").append(formElement);
+	  $("#updateModal .modal-body").append(form.form);
 	  $("#updateModal").modal();
 	}
-	
-	
 	
 	
 	/**
@@ -115,14 +155,17 @@ function Table() {
 	 * Gets buttons of actions for datas: modify, delete, .
 	 */
 	function getActionsButtons() {
-	  var updateButton = $('<span>&#x270E;</span>');
+	  var updateButton = $('<img/>');
 	  updateButton.addClass(updateButtonClass);
-	  
+	  updateButton.addClass('actionButton');
+	  updateButton.attr('src', 'static/images/bluePenEdit.jpeg');
 	  var buttonSeparator = $('<span>&nbsp; - &nbsp; </span>');
 	  
-	  var deleteButton = $('<span>X</span>');
-	  deleteButton.addClass('deleteButton');
-    
+	  var deleteButton = $('<img/>');
+	  deleteButton.addClass(removeButtonClass);
+	  deleteButton.addClass('actionButton');
+	  deleteButton.attr('src', 'static/images/removeButton.png');
+	  
 	  var buttons = $('<div></div>');
 	  buttons.append(updateButton);
 	  buttons.append(buttonSeparator);

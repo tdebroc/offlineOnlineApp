@@ -6,11 +6,15 @@ var compteur = 0;
  * Called when DOM has been loaded.
  */
 function loaded() {
-  DATABASE_MANAGER.loadDatas();
-  addFieldButton();
+  window.dataBaseManager = new DataBaseManager(MODEL_NAME);
+  dataBaseManager.loadDatas();
+  $('#launchFullSynch').click(function() {
+    dataBaseManager.reloadDatas();
+  })
+  addFieldForNewEntity();
   addSelectFieldFromServlet();
 }
-
+  
 /**
  * move the plus button to the new property field
  */
@@ -59,24 +63,38 @@ var buildInput = function(type, name, textToPrepend, textToAppend){
 /**
 *
 */
-
+this.ajaxStop = false;
 var addSelectFieldFromServlet = function(){
-	var jsonArray;
+	var jsonArray = [];
 	var entityArray = [];
-	$.get("getEntities", function(data){
-		jsonArray = $.parseJSON(data);
-	}).done(function(){$.each(jsonArray, function() {
-		entityArray.push(this.EntityKind); 
-		});});
+	var req = $.get("getEntities", {EntityName : "EntityProperty"}, function(data){
+		jsonArray = JSON.stringify(data);
+		jsonArray = $.parseJSON(jsonArray);
+	}).done(function(){$.each(jsonArray.entities, function() {
+		entityArray.push(this.EntityName); 
+		});
+	
+	});
+	
 	$(document).ajaxStop(function() {
+		if(this.ajaxStop){
+			return;
+		}
+		else{
 		entityArray = $.unique(entityArray);
 		$.each(entityArray,function() {
 			var opt = $("<option></option>");
 			opt.attr("value",this);
 			opt.html(this);
 			$("#addRandom").append(opt);
-		})
+		});
+		this.ajaxStop = true;
+		}	
+		
 	});
 	
+
 }
+	
+
 

@@ -1,6 +1,16 @@
 CACHE MANIFEST
 
-index.html
-static/js/bootstrap.js
+index.jsp
 static/css/bootstrap.css
+static/css/style.css
+static/images/bluePenEdit.jpeg
+static/images/removeButton.png
+static/js/bootstrap.js
+static/js/DBManager.js
+static/js/Form.js
 static/js/jquery-2.1.1.js
+static/js/Table.js
+static/js/main.js
+
+NETWORK:
+*

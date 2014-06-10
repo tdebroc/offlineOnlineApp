@@ -8,17 +8,28 @@ body {
 	padding: 20px;
 }
 
-.updateButton {
+.actionButton {
 	cursor: pointer;
+	width: 16px;
+	height: 16px;
 }
 
-#synchronizedLogo {
+
+#rightHeader {
 	position: absolute;
 	top: 0px;
 	right: 0px;
-	background-color: green;
 	min-width: 20px;
-	min-height: 20px;
-	padding: 5px;
-	color: white;
+  min-height: 20px;
+  color: white;
+}
+
+#rightHeader > span {
+  padding: 5px;	
+  margin-right: 5px;
+  background-color: green;
+}
+
+#launchFullSynch {
+	cursot: pointer;
 }

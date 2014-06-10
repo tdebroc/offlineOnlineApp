@@ -1,3 +1,4 @@
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -7,46 +8,37 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
-import com.google.gson.JsonArray;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.gson.JsonObject;
 import com.tdebroc.utilities.ChangesEntityManager;
 import com.tdebroc.utilities.EntityConstant;
-import com.tdebroc.utilities.JsonUtilities;
 
-public class GetEntitiesServlet extends HttpServlet {
+public class RemoveEntityServlet extends HttpServlet {
   
   private static final long serialVersionUID = 1L;
  
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws IOException, ServletException {
-    String entityName = req.getParameter("EntityName");
+    resp.setContentType("text/plain");
+    String entityKey = req.getParameter("entityKey");
+    String entityKind = req.getParameter("entityKind");
     
-    Query q = new Query(entityName);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery pq = datastore.prepare(q);  
-    
-    JsonArray allEntities = new JsonArray();
-    
-    for (Entity result : pq.asIterable()) {
-      allEntities.add(JsonUtilities.entityToJson(result));
-    }
-    long timestamp = ChangesEntityManager.getLastTimestamp(entityName);
+    Key key = KeyFactory.stringToKey(entityKey);
+
+    JsonObject jsonEntity = new JsonObject();
+    jsonEntity.addProperty(EntityConstant.ENTITY_KEY_PROPERTY_NAME, entityKey);
+    datastore.delete(key);
+    long timeStampDBVersion = 
+        ChangesEntityManager.recordChange(jsonEntity, "delete", entityKind);
 
     JsonObject response = new JsonObject();
     response.addProperty(
-        EntityConstant.ENTITY_CHANGES_TIMESTAMP_PROPERTY_NAME, timestamp);
-    response.add("entities", allEntities);
-       
+        EntityConstant.ENTITY_CHANGES_TIMESTAMP_PROPERTY_NAME,
+        timeStampDBVersion);
     resp.setContentType("application/json");
     resp.getWriter().println(response);
   }
 }
-
-
-
-
-

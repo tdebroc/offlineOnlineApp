@@ -1,10 +1,12 @@
 
 
 
-function Form() {
+function Form(dbManager) {
   
   /* {$} Form Element. */
   this.form;
+  /* {DBManager} DBManager handling datas with the form. */
+  this.dbManager = dbManager;
   
   /**
    * 
@@ -37,7 +39,6 @@ function Form() {
       this.form.append(input);
     }
     
-    return this.form;
   }
   
   
@@ -46,6 +47,14 @@ function Form() {
    * @param {String || $} Selector 
    */
   this.bindUpdateClickButton = function(updateButton) {
+    var that = this;
+    this.form.on('keypress',
+      function (e) {
+        var key = e.which || e.keyCode;
+        if (key == 13) { // 13 is enter
+          that.launchesUpdate();
+        }
+    });
     $(updateButton).click(this.launchesUpdate.bind(this));
   }
   
@@ -55,7 +64,9 @@ function Form() {
    */
   this.launchesUpdate = function() {
     console.log("launches Updates : " + JSON.stringify(this.serializeForm()));
-    DATABASE_MANAGER.updateEntity(this.serializeForm());
+    this.dbManager.updateEntity(this.serializeForm());
+    // TODO : this shouldn't be here : an event will be better.
+    $('.cancelSaveChange').click();
   }
   
   
