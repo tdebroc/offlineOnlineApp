@@ -33,3 +33,16 @@ body {
 #launchFullSynch {
 	cursot: pointer;
 }
+
+input  {
+	margin-bottom : 10px;
+}
+
+select  {
+	margin-bottom : 10px;
+}
+.form-control {
+	width: auto;
+}
+
+}
