@@ -11,7 +11,8 @@ function loaded() {
   $('#launchFullSynch').click(function() {
     dataBaseManager.reloadDatas();
   });
+  var entityKindSwitcher = EntityKindSwitcher(dataBaseManager);
   ecm = new entityCreationManager();
   ecm.init();
-}	
+}
   

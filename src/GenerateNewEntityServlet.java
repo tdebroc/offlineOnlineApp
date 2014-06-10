@@ -12,19 +12,23 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.tdebroc.utilities.JsonUtilities;
 
 
 public class GenerateNewEntityServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
+
+	private static final String ENTITY_NAME_PARAM = "entityName";
+	
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		
 		createEntity(req);
-	    resp.setContentType("text/plain");
-		
+	  resp.setContentType("text/plain");
+	  resp.getWriter().println("Entity " + 
+	      req.getParameter(ENTITY_NAME_PARAM) + " has been created");
 	}
 	
 	

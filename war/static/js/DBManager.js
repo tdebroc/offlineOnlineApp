@@ -357,7 +357,12 @@ function DataBaseManager(modelName) {
   this.buildTableFromJson = function(dataJson) {
     var table = new Table();
     table.dbManager = this;
-    table.init("#tableContainer", dataJson);
+    var tableSelector = "#tableContainer";
+    if (dataJson.length == 0) {
+      $(tableSelector).html("Table is empty. No entities.");
+    } else {
+      table.init(tableSelector, dataJson);
+    }
     this.storeDatas(MODEL_NAME, dataJson);
   }
 
