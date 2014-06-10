@@ -213,3 +213,4 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+war/WEB-INF/appengine-generated/datastore-indexes-auto.xml
