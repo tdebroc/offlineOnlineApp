@@ -8,6 +8,8 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.CompositeFilter;
@@ -17,6 +19,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class ChangesEntityManager {
@@ -121,8 +124,39 @@ public class ChangesEntityManager {
   }
 
 
+  /**
+   * Removes an entity from the datastore.
+   */
+  public static long removeEntity(String entityKey, String entityKind) {
+    Key key = KeyFactory.stringToKey(entityKey);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    JsonObject jsonEntity = new JsonObject();
+    jsonEntity.addProperty(EntityConstant.ENTITY_KEY_PROPERTY_NAME, entityKey);
+    datastore.delete(key);
+    return ChangesEntityManager.recordChange(jsonEntity, "delete", entityKind);
+  }
   
   
+  /**
+   * Pushes changes to server.
+   * @return
+   */
+  public static Long pushChangesJson(JsonArray changes) {
+    long timeStampDBVersion = -1;
+    for (JsonElement change : changes) {
+      JsonObject changeObject = change.getAsJsonObject();
+      if (changeObject.get("changeType").getAsString().equals("update")) {
+        timeStampDBVersion =
+            JsonUtilities.updateEntityFromJson(
+                changeObject.get("entityJson").getAsJsonObject());
+      } else if (changeObject.get("changeType").equals("delete")) {
+        timeStampDBVersion =
+            JsonUtilities.updateEntityFromJson(
+                changeObject.get("entityJson").getAsJsonObject());
+      }
+    }
+    return timeStampDBVersion;
+  }
   
 
 }

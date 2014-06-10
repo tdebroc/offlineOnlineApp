@@ -7,6 +7,7 @@ static/images/bluePenEdit.jpeg
 static/images/removeButton.png
 static/js/bootstrap.js
 static/js/DBManager.js
+static/js/EntityKindSwitcher.js
 static/js/Form.js
 static/js/jquery-2.1.1.js
 static/js/Table.js

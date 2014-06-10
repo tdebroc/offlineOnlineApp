@@ -108,6 +108,7 @@
     <url-pattern>/checkSynchronization</url-pattern>
   </servlet-mapping>
   
+  
   <servlet>
     <servlet-name>GenerateRandomEntity</servlet-name>
     <servlet-class>GenerateRandomEntityServlet</servlet-class>
@@ -117,6 +118,18 @@
     <servlet-name>GenerateRandomEntity</servlet-name>
     <url-pattern>/generateRandomEntity</url-pattern>
   </servlet-mapping>
+  
+  
+  <servlet>
+    <servlet-name>PushChanges</servlet-name>
+    <servlet-class>PushChangesServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>PushChanges</servlet-name>
+    <url-pattern>/pushChanges</url-pattern>
+  </servlet-mapping>
+  
   
   
   <mime-mapping>

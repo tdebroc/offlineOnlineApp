@@ -150,6 +150,7 @@ function unique (list) {
 * already exist in EntityProperty
 */
 this.fillEntityKindSelect = function(){
+  // TODO (asettouf) : Improve method perfs and move it to EntityKindSwitcher
   $(".entityKindSelect").html("");
 	var jsonArray = [];
 	var entityArray = [];
@@ -159,7 +160,7 @@ this.fillEntityKindSelect = function(){
 	  $.each(jsonArray.entities, function() {
   		entityArray.push(this.EntityName); 
   		entityArray = unique(entityArray);
-  		console.log(entityArray)
+  		// console.log(entityArray)
 		});
 	  $.each(entityArray,function() {
 	    var opt = $("<option></option>");

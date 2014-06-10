@@ -99,19 +99,22 @@ function DataBaseManager(modelName) {
   /**
    * @param {JSON} jsonEntity
    */
-  this.addToOfflineWaitingList = function(jsonEntity) {
+  this.addUpdateToOfflineWaitingList = function(jsonEntity) {
     var modelName = jsonEntity[ENTITY_KIND_PROPERTY_NAME];
     var offlineWaitingList = this.getOfflineWaitingList(modelName);
-    offlineWaitingList.push(jsonEntity);
-    localStorage["offlineWaitingList" + modelName] =
-        JSON.stringify(offlineWaitingList);
+    var change = {};
+    change['changeType'] = "update";
+    change['entityJson'] = jsonEntity;
+    change['entityKind'] = modelName;
+    offlineWaitingList.push(change);
+    this.setOfflineWaitingList(modelName, offlineWaitingList);
     this.updateSynchLogo();
   }
   
   
   /**
-   * @param {JSON} jsonEntity
-   * @return {String} jsonEntity
+   * @param {String} modelName
+   * @return {String} jsonChanges
    */
   this.getOfflineWaitingList = function(modelName) {
     var offlineWaitingList = localStorage["offlineWaitingList" + modelName];
@@ -122,11 +125,22 @@ function DataBaseManager(modelName) {
     }
   }
   
+  
+  /**
+   * @param {String} modelName
+   * @return {JSON} jsonChanges
+   */
+  this.setOfflineWaitingList = function(modelName, jsonChanges) {
+    localStorage["offlineWaitingList" + modelName] =
+        JSON.stringify(jsonChanges);
+  }
+  
+  
   /**
    * Updates status of synch logo.
    */
   this.updateSynchLogo = function() {
-    var offlineWaitingList = localStorage["offlineWaitingList" + MODEL_NAME];
+    var offlineWaitingList = this.getOfflineWaitingList(MODEL_NAME);
     if (!offlineWaitingList || offlineWaitingList.length == 0) {
       $('#synchronizedLogo').css('background-color', 'green');
       $('#synchronizedLogo').html("Synchronized online");
@@ -142,13 +156,15 @@ function DataBaseManager(modelName) {
    */
   this.launchOfflineWaitingListSynchronization = function() {
     // TODO() : parses all local Storage key to look all offlineWainting list. 
-    var offlineWaitingList = localStorage["offlineWaitingList" + MODEL_NAME];
+    var offlineWaitingList =
+        this.getOfflineWaitingList(MODEL_NAME);
     if (!offlineWaitingList || offlineWaitingList.length == 0) {
       return;
     }
     // TODO Should be a POST, verify everywhere else!!!
-    $.get("updateEntities?entitiesJson=" + offlineWaitingList,
-        this.callbackWaitingListSynchronization.bind(this));
+    $.get("pushChanges?changes=" + JSON.stringify(offlineWaitingList))
+        .done(this.callbackWaitingListSynchronization.bind(this))
+        .fail(function(data) {console.log(data)});
   }
   
   
@@ -159,7 +175,7 @@ function DataBaseManager(modelName) {
   this.callbackWaitingListSynchronization = function(data) {
     this.setTimeStampDBVersion(data['timeStampDBVersion']);
     console.log("offlineWaitingList updateEntities Done");
-    localStorage["offlineWaitingList" + MODEL_NAME] = [];
+    this.setOfflineWaitingList(MODEL_NAME, []);
     this.updateSynchLogo();
   }
   
@@ -197,13 +213,9 @@ function DataBaseManager(modelName) {
     $.ajax({
       'url' : "updateEntity?entityJson=" + JSON.stringify(jsonEntity)
     })
-    .done(this.successUpdateEntity.bind(this))
-    .fail(
-      (function(scope, firstParam) {
-        return function() {
-          scope.failUpdateEntity(firstParam)
-        }
-      }) (this, jsonEntity)
+    // TODO remove Debug Switch Here
+    .fail(this.successUpdateEntity.bind(this))
+    .done(this.failUpdateEntity.bindWithParams(this, [jsonEntity])
     );
     this.updateLocalDBWithOneEntity(jsonEntity);
   }
@@ -223,8 +235,8 @@ function DataBaseManager(modelName) {
    * Callback for the update entity ajax call.
    */
   this.failUpdateEntity = function(jsonEntity) {
-    console.log("addToOfflineWaitingList" + jsonEntity);
-    this.addToOfflineWaitingList(jsonEntity);
+    console.log("addUpdateToOfflineWaitingList" + jsonEntity);
+    this.addUpdateToOfflineWaitingList(jsonEntity);
     this.changeOnlineStatus(false);
   }
   
@@ -291,7 +303,7 @@ function DataBaseManager(modelName) {
     $.ajax({'url' : "removeEntity?entityKey=" + key +
         "&entityKind=" + MODEL_NAME})
       .done(this.removeEntitySuccess.bind(this))
-      .fail(this.removeEntityFailure.bind(this));
+      .fail(this.removeEntityFailure.bindWithParams(this, key, MODEL_NAME));
     this.removeEntityFromLocalDB(key);
   }
 
@@ -333,18 +345,42 @@ function DataBaseManager(modelName) {
 
 
   /**
-   * Success when removing an entity from the datastore.
+   * Callback for a Success when removing an entity from the datastore.
+   * @param {JSON} Response from the service.
    */
-  this.removeEntitySuccess = function() {
-    
+  this.removeEntitySuccess = function(data) {
+    this.setTimeStampDBVersion(data['timeStampDBVersion']);
+    console.log("remove entity is a success");
   }
   
   
   /**
-   * Callback after the remove entity call.
+   * Callback for a failure after the remove entity call.
+   * @param {String} key The key of the entity we want to remove.
+   * @param {String} modelName Name of the model from which we want to remove
+   *     the entity.
    */
-  this.removeEntityFailure = function() {
-    
+  this.removeEntityFailure = function(key, modelName) {
+    console.log("addRemoveToOfflineWaitingList entity : " + key);
+    this.addRemoveToOfflineWaitingList(key, modelName);
+    this.changeOnlineStatus(false);
+  }
+  
+  
+  /**
+   * @param {String} key The key of the entity we want to remove.
+   * @param {String} modelName Name of the model from which we want to remove
+   *     the entity.
+   */
+  this.addRemoveToOfflineWaitingList = function(key, modelName) {
+    var offlineWaitingList = this.getOfflineWaitingList(modelName);
+    var change = {};
+    change['changeType'] = "delete";
+    change['entityJson'] = {ENTITY_KEY_PROPERTY_NAME : key};
+    change['entityKind'] = modelName;
+    offlineWaitingList.push(change);
+    this.setOfflineWaitingList(modelName, offlineWaitingList);
+    this.updateSynchLogo();
   }
 
 
