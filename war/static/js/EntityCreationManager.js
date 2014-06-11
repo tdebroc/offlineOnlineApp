@@ -1,14 +1,13 @@
-function entityCreationManager() {
+function EntityCreationManager() {
 
-//{boolean} used to stop never ending loop of ajax call
 //{Number} used to count the number of new properties
 this.compteur;
 
 
-this.init = function() {
+  this.init = function() {
 	this.initForm();
 	this.bindClickCreateNewEntityConfirm();
-}
+  }
 
   /**
    * Binds click on the confirmation button to create new entity.
@@ -73,7 +72,7 @@ this.init = function() {
  * @param{String} opt_textToPrepend : text to prepend before input
  * @param{String} opt_textToAppend : text to append after input
  */
-buildInput = function(type, name, opt_textToPrepend, opt_textToAppend){
+var buildInput = function(type, name, opt_textToPrepend, opt_textToAppend){
 	var textPrepend = (opt_textToPrepend == undefined ? "": opt_textToPrepend);
 	var textAppend = (opt_textToAppend == undefined ? "": opt_textToAppend);
 	var input = $(textPrepend + '<input/>' + textAppend);

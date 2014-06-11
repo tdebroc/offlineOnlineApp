@@ -82,7 +82,7 @@
   </div>
 
   <div id="newEntityModal" class="modal fade bs-example-modal-lg"
-    tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+    tabindex="-1" role="dialog" aria-labelledby="Create"
     aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">

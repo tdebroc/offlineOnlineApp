@@ -13,7 +13,7 @@ function loaded() {
     dataBaseManager.reloadDatas();
   });
   var entityKindSwitcher = EntityKindSwitcher(dataBaseManager);
-  ecm = new entityCreationManager();
+  var ecm = new EntityCreationManager();
   ecm.init();
 }
 
