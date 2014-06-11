@@ -1,13 +1,11 @@
 function entityCreationManager() {
 
 //{boolean} used to stop never ending loop of ajax call
-this.ajaxStop = false;
 //{Number} used to count the number of new properties
 this.compteur;
 
 
 this.init = function() {
-	this.fillEntityKindSelect();
 	this.initForm();
 	this.bindClickCreateNewEntityConfirm();
 }
@@ -102,17 +100,17 @@ buildInput = function(type, name, opt_textToPrepend, opt_textToAppend){
  * to add a param to the new Entity
  */
 this.addFieldForNewEntity = function() {
-	 var input = buildInput("text", "propertyName " + this.compteur);
+	 var input = buildInput("text", "propertyName" + this.compteur);
 	 var input3 = buildInput("text", "type" + this.compteur);
 	 var input4 = buildInput("number", "minVal" + this.compteur);
 	 var input5 = buildInput("number", "maxVal" + this.compteur);
 	 var addPropertyButton = $("<div>Add Property</div>")
-   addPropertyButton.attr('id', 'addPropertyField');
+     addPropertyButton.attr('id', 'addPropertyField');
 	 addPropertyButton.addClass("btn btn-default")
 
 	 $("#addPropertyField").remove();
 	 $("#new").remove();
-	 $("#add-new-entity").append("<strong>Property Name"+ this.compteur +" : </strong>");
+	 $("#add-new-entity").append("<strong>Property Name "+ this.compteur +" : </strong>");
 	 $("#add-new-entity").append(input);
 	 $("#add-new-entity").append(" Type : ");
 	 $("#add-new-entity").append(input3);
@@ -120,7 +118,7 @@ this.addFieldForNewEntity = function() {
 	 $("#add-new-entity").append(input4);
 	 $("#add-new-entity").append(" Maximum Value : ");
 	 $("#add-new-entity").append(input5);
-   $("#add-new-entity").append(addPropertyButton);
+     $("#add-new-entity").append(addPropertyButton);
 	 this.bindClickAddProperty();
 	 this.compteur++;
 }
@@ -132,46 +130,5 @@ this.bindClickAddProperty = function() {
 	  $("#addPropertyField").click(this.addFieldForNewEntity.bind(this));
 }
 
-/**
- * function that returns a list with unique elements and remove "" element
- */
-
-function unique (list) {
-	var result = [];
-	$.each(list,function(i,e){
-		if($.inArray(e,result) == -1 && e != ""){
-			result.push(e);
-		}
-	});
-	return result;
-}
-/**
-* Ajax call to populate select fields to generate a Random Entity whose properties
-* already exist in EntityProperty
-*/
-this.fillEntityKindSelect = function(){
-  // TODO (asettouf) : Improve method perfs and move it to EntityKindSwitcher
-  $(".entityKindSelect").html("");
-	var jsonArray = [];
-	var entityArray = [];
-	var req = $.get("getEntities", {EntityName : "EntityProperty"}, function(data){
-		jsonArray = data;
-	}).done(function(){
-	  $.each(jsonArray.entities, function() {
-  		entityArray.push(this.EntityName); 
-  		entityArray = unique(entityArray);
-  		// console.log(entityArray)
-		});
-	  $.each(entityArray,function() {
-	    var opt = $("<option></option>");
-	    opt.attr("value",this);
-	    opt.html(this);
-	    $(".entityKindSelect").append(opt);
-	
-	});
-		
-		
-	});
-	}
 }
 	
