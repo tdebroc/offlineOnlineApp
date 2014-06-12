@@ -171,12 +171,12 @@
   
   <script src="static/js/jquery-2.1.1.js"></script>
   <script src="static/js/bootstrap.js"></script>
-  <script src="static/js/entityCreationManager.js"></script>
   <script src="static/js/main.js"></script>
   <script src="static/js/Table.js"></script>
   <script src="static/js/Form.js"></script>
   <script src="static/js/DBManager.js"></script>
   <script src="static/js/EntityKindSwitcher.js"></script>
+  <script src="static/js/EntityCreationManager.js"></script>
 </body>
 
 </html>

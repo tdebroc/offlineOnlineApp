@@ -9,9 +9,9 @@ function EntityKindSwitcher(dbManager) {
    * Initializes entity kind switcher.
    */
   this.init = function() {
-	this.fillEntityKindSelect();
     $('#entityKindSwitcher').on('change',
         this.switchEntityKind.bind(this));
+    this.fillEntityKindSelect();
   }
 
   
@@ -24,30 +24,45 @@ function EntityKindSwitcher(dbManager) {
     this.dbManager.loadDatas();
   }
   
+
+  this.callbackSuccessCreateRandomEntity = function(data){
+	var entityArray = [];
+    $.each(data.entities, function(i,e) {
+ 	entityName = e.EntityName;
+ 	console.log(entityArray);
+    if($.inArray(entityName, entityArray) == -1 && e != ""){
+  	   entityArray.push(entityName); 
+	   var opt = $("<option></option>");
+	   opt.attr("value",entityName);
+	   opt.html(entityName);
+	   $(".entityKindSelect").append(opt);
+ 	 }
+ 	});
+    
+  }
+  
   /**
-  * Ajax call to populate select fields to generate a Random Entity whose properties
-  * already exist in EntityProperty
-  */
-  this.fillEntityKindSelect = function(){
-    $(".entityKindSelect").html("");
-  	var jsonArray = [];
-  	var entityArray = [];
-  	var req = $.get("getEntities", {EntityName : "EntityProperty"}, function(data){
-  		jsonArray = data;
-  	}).done(function(){
-  	  $.each(jsonArray.entities, function(i,e) {
-  		  entityName = e.EntityName;
-  		  if($.inArray(entityName,entityArray) == -1 && e != ""){
-  			  entityArray.push(entityName); 
-  			  var opt = $("<option></option>");
-  			  opt.attr("value",entityName);
-  			  opt.html(entityName);
-  			  $(".entityKindSelect").append(opt);
-  			}
-    		
-  		});
-  	  });
-    }
+   * Callback to generate the select fields for already existing entities
+   * @param {JSON Array} : contains all the informations of the table EntityProperty
+   */
+  this.callbackSuccessCreateRandomEntity = function(data){
+    $.each(data.entities, function(i,e) {
+	  entityName = e.EntityName;
+	  var opt = $("<option></option>");
+	  opt.attr("value",entityName);
+	  opt.html(entityName);
+	  $(".entityKindSelect").append(opt);
+ 	});
+	this.dbManager.reloadDatas();
+  }
+  /**
+   * Ajax call to populate select fields to generate a Random Entity whose properties
+   * already exist in EntityProperty
+   */
+ this.fillEntityKindSelect = function(){
+   $(".entityKindSelect").html("");
+   $.get("getAllEntityNames", this.callbackSuccessCreateRandomEntity.bind(this));
+  }
   
   this.init();
 }

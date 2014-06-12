@@ -1,7 +1,11 @@
-function EntityCreationManager() {
+function EntityCreationManager(dbManager, entityKindSwitcher) {
 
-//{Number} used to count the number of new properties
-this.compteur;
+//{Number} Used to count the number of new properties.
+this.compteur = 0;
+//{DatabaseManager} Used to have a consistent local db when generating Entities.
+this.dbManager = dbManager;
+//{EntityKindSwitcher} Used to have access to the function fillEntityKindSelect.
+this.entityKindSwitcher = entityKindSwitcher;
 
 
   this.init = function() {
@@ -9,6 +13,7 @@ this.compteur;
 	this.bindClickCreateNewEntityConfirm();
   }
 
+  
   /**
    * Binds click on the confirmation button to create new entity.
    */
@@ -40,7 +45,7 @@ this.compteur;
     $('#newEntityModalMessage').html(data);
     $('#newEntityModalMessage').css('color', 'green');
     this.initForm();
-    this.fillEntityKindSelect();
+    this.entityKindSwitcher.fillEntityKindSelect();
   }
 
   
@@ -64,15 +69,14 @@ this.compteur;
   }
 
 
-
-/**
- * Build more input to add params for new Entities
- * @param{String} type : field to indicate the type of the input
- * @param{String} name : name of the input field used in the servlet
- * @param{String} opt_textToPrepend : text to prepend before input
- * @param{String} opt_textToAppend : text to append after input
- */
-var buildInput = function(type, name, opt_textToPrepend, opt_textToAppend){
+ /**
+  * Build more input to add params for new Entities.
+  * @param{String} type : field to indicate the type of the input
+  * @param{String} name : name of the input field used in the servlet
+  * @param{String} opt_textToPrepend : text to prepend before input
+  * @param{String} opt_textToAppend : text to append after input
+  */
+  var buildInput = function(type, name, opt_textToPrepend, opt_textToAppend){
 	var textPrepend = (opt_textToPrepend == undefined ? "": opt_textToPrepend);
 	var textAppend = (opt_textToAppend == undefined ? "": opt_textToAppend);
 	var input = $(textPrepend + '<input/>' + textAppend);
@@ -89,45 +93,43 @@ var buildInput = function(type, name, opt_textToPrepend, opt_textToAppend){
   this.addEntityNameInput = function() {
     var input = buildInput("text", "entityName");
     $("#add-new-entity")
-        .append("<b> Entity Name : </b>")
-        .append(input);
+      .append("<b> Entity Name : </b>")
+      .append(input);
   }
 
   
-/**
- * move the plus button to the new property field and add all the fields
- * to add a param to the new Entity
- */
-this.addFieldForNewEntity = function() {
-	 var input = buildInput("text", "propertyName" + this.compteur);
-	 var input3 = buildInput("text", "type" + this.compteur);
-	 var input4 = buildInput("number", "minVal" + this.compteur);
-	 var input5 = buildInput("number", "maxVal" + this.compteur);
-	 var addPropertyButton = $("<div>Add Property</div>")
-     addPropertyButton.attr('id', 'addPropertyField');
-	 addPropertyButton.addClass("btn btn-default")
+  /**
+   * Move the plus button to the new property field and add all the fields
+   * to add a param to the new Entity.
+   */
+  this.addFieldForNewEntity = function() {
+	var input = buildInput("text", "propertyName" + this.compteur);
+	var input3 = buildInput("text", "type" + this.compteur);
+	var input4 = buildInput("number", "minVal" + this.compteur);
+	var input5 = buildInput("number", "maxVal" + this.compteur);
+	var addPropertyButton = $("<div>Add Property</div>")
+	addPropertyButton.attr('id', 'addPropertyField');
+	addPropertyButton.addClass("btn btn-default")
+	$("#addPropertyField").remove();
+	$("#new").remove();
+	$("#add-new-entity")
+	.append("<span><strong>Property Name "+ this.compteur +" : </strong></span>")
+	.append(input).append("<span>Type : </span>").append(input3)
+	.append("<span> Minimum Value : </span>")
+	.append(input4).append("<span>Maximum Value : </span>")
+	.append(input5).append(addPropertyButton);
+    this.bindClickAddProperty();
+    this.compteur++;
+  }
 
-	 $("#addPropertyField").remove();
-	 $("#new").remove();
-	 $("#add-new-entity").append("<strong>Property Name "+ this.compteur +" : </strong>");
-	 $("#add-new-entity").append(input);
-	 $("#add-new-entity").append(" Type : ");
-	 $("#add-new-entity").append(input3);
-	 $("#add-new-entity").append(" Minimum Value : ");
-	 $("#add-new-entity").append(input4);
-	 $("#add-new-entity").append(" Maximum Value : ");
-	 $("#add-new-entity").append(input5);
-     $("#add-new-entity").append(addPropertyButton);
-	 this.bindClickAddProperty();
-	 this.compteur++;
-}
+  /**
+   * Bind the click on button to add more properties to a new Entity.
+   */
+  this.bindClickAddProperty = function() {
+    $("#addPropertyField").click(this.addFieldForNewEntity.bind(this));
+  }
 
-/**
- * bind plus button
- */
-this.bindClickAddProperty = function() {
-	  $("#addPropertyField").click(this.addFieldForNewEntity.bind(this));
-}
+  this.init(); 
 
 }
 	

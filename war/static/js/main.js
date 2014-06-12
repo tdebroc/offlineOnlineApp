@@ -1,7 +1,6 @@
 $(document).ready(loaded);
 
 
-xhr = new XMLHttpRequest();
 /**
  * Called when DOM has been loaded.
  */
@@ -12,9 +11,8 @@ function loaded() {
   $('#launchFullSynch').click(function() {
     dataBaseManager.reloadDatas();
   });
-  var entityKindSwitcher = EntityKindSwitcher(dataBaseManager);
-  var ecm = new EntityCreationManager();
-  ecm.init();
+  var entityKindSwitcher = new EntityKindSwitcher(dataBaseManager);
+  var ecm = new EntityCreationManager(dataBaseManager,entityKindSwitcher);
 }
 
 
