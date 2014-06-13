@@ -24,23 +24,7 @@ function EntityKindSwitcher(dbManager) {
     this.dbManager.loadDatas();
   }
   
-
-  this.callbackSuccessCreateRandomEntity = function(data){
-	var entityArray = [];
-    $.each(data.entities, function(i,e) {
- 	entityName = e.EntityName;
- 	console.log(entityArray);
-    if($.inArray(entityName, entityArray) == -1 && e != ""){
-  	   entityArray.push(entityName); 
-	   var opt = $("<option></option>");
-	   opt.attr("value",entityName);
-	   opt.html(entityName);
-	   $(".entityKindSelect").append(opt);
- 	 }
- 	});
-    
-  }
-  
+ 
   /**
    * Callback to generate the select fields for already existing entities
    * @param {JSON Array} : contains all the informations of the table EntityProperty
