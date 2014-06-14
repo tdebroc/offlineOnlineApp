@@ -31,13 +31,13 @@ function EntityKindSwitcher(dbManager) {
    */
   this.callbackSuccessCreateRandomEntity = function(data){
     $.each(data.entities, function(i,e) {
-	  entityName = e.EntityName;
-	  var opt = $("<option></option>");
-	  opt.attr("value",entityName);
-	  opt.html(entityName);
-	  $(".entityKindSelect").append(opt);
- 	});
-	this.dbManager.reloadDatas();
+  	  entityName = e.EntityName;
+  	  var opt = $("<option></option>");
+  	  opt.attr("value",entityName);
+  	  opt.html(entityName);
+  	  $(".entityKindSelect").append(opt);
+   	});
+  	this.dbManager.reloadDatas();
   }
   /**
    * Ajax call to populate select fields to generate a Random Entity whose properties

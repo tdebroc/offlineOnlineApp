@@ -401,7 +401,8 @@ function DataBaseManager(modelName) {
 
   
   /**
-   * Removes existing entities.
+   * When inserting new entity in local DB, we don't want to to insert
+   *     duplicates. So we remove already existing entities if there is some.
    */
   this.removeExistingEntities = function(entities, jsonEntitiesArray) {
     var keysToadd = {};
@@ -494,8 +495,8 @@ function DataBaseManager(modelName) {
   this.removeEntity = function(key) {
     $.ajax({'url' : "removeEntity?entityKey=" + key +
         "&entityKind=" + MODEL_NAME})
-      .done(this.removeEntitySuccess.bind(this))
-      .fail(this.removeEntityFailure.bindWithParams(this, key, MODEL_NAME));
+      .fail(this.removeEntitySuccess.bind(this))
+      .done(this.removeEntityFailure.bindWithParams(this, [key, MODEL_NAME]));
     this.removeEntityFromLocalDB(key);
   }
 

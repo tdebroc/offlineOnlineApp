@@ -57,15 +57,6 @@
     <url-pattern>/generateNewEntityServlet</url-pattern>
   </servlet-mapping>
   
-   <servlet>
-    <servlet-name>generateRandomEntity</servlet-name>
-    <servlet-class>GenerateRandomEntity</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>generateRandomEntity</servlet-name>
-    <url-pattern>/generateRandomEntity</url-pattern>
-  </servlet-mapping>
   
   <servlet>
     <servlet-name>removeEntityServlet</servlet-name>
@@ -150,6 +141,17 @@
   <servlet-mapping>
     <servlet-name>DeleteAllEntities</servlet-name>
     <url-pattern>/deleteAllEntities</url-pattern>
+  </servlet-mapping>
+  
+  
+  <servlet>
+    <servlet-name>GetAllEntityNames</servlet-name>
+    <servlet-class>GetAllEntityNamesServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>GetAllEntityNames</servlet-name>
+    <url-pattern>/getAllEntityNames</url-pattern>
   </servlet-mapping>
   
   

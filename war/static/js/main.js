@@ -5,7 +5,7 @@ $(document).ready(loaded);
  * Called when DOM has been loaded.
  */
 function loaded() {
-  // as a global variable for debug then switch back to local one.
+  // TODO : It's as a global variable for debug then switch back to local one.
   window.dataBaseManager = new DataBaseManager(MODEL_NAME);
   dataBaseManager.loadDatas();
   $('#launchFullSynch').click(function() {
