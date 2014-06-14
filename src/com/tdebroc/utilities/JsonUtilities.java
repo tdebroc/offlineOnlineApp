@@ -5,14 +5,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.EntityNotFoundException;
-import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class JsonUtilities {
@@ -59,52 +53,6 @@ public class JsonUtilities {
 		}
 		return jsonObject;
 	}
-
-
-	/**
-	 * Updates a datastore entity from it's JSON.
-	 * @param entityJson
-	 * @return {Boolean} Whether the update had worked or not.
-	 */
-	public static long updateEntityFromJson(JsonObject entityJson) {
-	  String keyString = entityJson.get(EntityConstant.ENTITY_KEY_PROPERTY_NAME).getAsString();
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Key key = KeyFactory.stringToKey(keyString);
-    try {
-      Entity entity = datastore.get(key);
-      Set<String> invisiblesKeys = JsonUtilities.getInvisibleKeys();
-      for (Map.Entry<String,JsonElement> entry : entityJson.entrySet()) {
-        String propertyName = entry.getKey();
-        if (!invisiblesKeys.contains(propertyName)) {
-          entity.setProperty(propertyName, entry.getValue().getAsString());
-        }
-      }
-      datastore.put(entity);
-
-      return ChangesEntityManager.recordChange(entityJson, "update");
-    } catch (EntityNotFoundException e) {
-      e.printStackTrace();
-      return -1;
-    }
-	}
-	
-	
-	/**
-   * Updates several datastore entities from a JSON array containing them.
-   * @param entitiesJsonArray {JsonArray}
-   * @return {Boolean} Whether the update had worked or not.
-   */
-  public static Long updateEntitiesFromJson(JsonArray entitiesJsonArray) {
-    Iterator<JsonElement> entititiesIterator = entitiesJsonArray.iterator();
-    long timeStamp = -1;
-    while (entititiesIterator.hasNext()) {
-      JsonElement jsonElement = entititiesIterator.next();
-      timeStamp = updateEntityFromJson(jsonElement.getAsJsonObject());
-    }
-    return timeStamp;
-  }
-	
-  
 	
 	
 }

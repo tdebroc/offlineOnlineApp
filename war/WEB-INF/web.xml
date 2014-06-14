@@ -129,7 +129,28 @@
     <servlet-name>PushChanges</servlet-name>
     <url-pattern>/pushChanges</url-pattern>
   </servlet-mapping>
+
   
+  <servlet>
+    <servlet-name>InsertNewEntity</servlet-name>
+    <servlet-class>InsertNewEntityServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>InsertNewEntity</servlet-name>
+    <url-pattern>/insertEntity</url-pattern>
+  </servlet-mapping>
+  
+  
+  <servlet>
+    <servlet-name>DeleteAllEntities</servlet-name>
+    <servlet-class>DeleteAllEntitiesServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>DeleteAllEntities</servlet-name>
+    <url-pattern>/deleteAllEntities</url-pattern>
+  </servlet-mapping>
   
   
   <mime-mapping>

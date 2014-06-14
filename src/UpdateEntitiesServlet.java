@@ -9,8 +9,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.tdebroc.utilities.ChangesEntityManager;
 import com.tdebroc.utilities.EntityConstant;
-import com.tdebroc.utilities.JsonUtilities;
 
 public class UpdateEntitiesServlet extends HttpServlet {
   
@@ -29,7 +29,8 @@ public class UpdateEntitiesServlet extends HttpServlet {
       return;
     }
     JsonArray entitiesJsonArray = entitiesJson.getAsJsonArray();
-    Long timeStampDBVersion = JsonUtilities.updateEntitiesFromJson(entitiesJsonArray);
+    Long timeStampDBVersion =
+        ChangesEntityManager.updateEntitiesFromJson(entitiesJsonArray);
     
     JsonObject response = new JsonObject();
     response.addProperty(

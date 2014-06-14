@@ -10,7 +10,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.tdebroc.utilities.ChangesEntityManager;
-import com.tdebroc.utilities.EntityConstant;
 
 public class PushChangesServlet extends HttpServlet {
   
@@ -30,14 +29,10 @@ public class PushChangesServlet extends HttpServlet {
     }
 
     JsonArray entitiesJsonArray = changesJson.getAsJsonArray();
-    Long timeStampDBVersion =
+    JsonObject response =
         ChangesEntityManager.pushChangesJson(entitiesJsonArray);
 
-    JsonObject response = new JsonObject();
-    response.addProperty(
-        EntityConstant.ENTITY_CHANGES_TIMESTAMP_PROPERTY_NAME, timeStampDBVersion);
-    resp.setContentType("text/plain");
-    resp.getWriter().println(timeStampDBVersion != -1 ? response
-        : "Error While updating");
+    resp.setContentType("application/json");
+    resp.getWriter().println(response);
   }
 }

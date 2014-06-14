@@ -30,8 +30,8 @@ function DataBaseManager(modelName) {
     $.ajax({'url' : "checkSynchronization?timestamp="
         + this.getTimeStampDBVersion(MODEL_NAME) + "&"
         + "entityKind=" + MODEL_NAME})
-    .done(this.checkSynchronizationSuccess.bind(this))
-    .fail(this.checkSynchronizationFailure.bind(this));
+    .done(this.checkSynchronizationSuccess.bind(this));
+    //.fail(this.checkSynchronizationFailure.bind(this));
     setTimeout(this.checkSynchronization.bind(this), checkOnlineDelay);
   }
   
@@ -55,6 +55,7 @@ function DataBaseManager(modelName) {
     }
     var allUpdateChanges = [];
     var allRemoveChanges = [];
+    var allInsertChanges = [];
     for (var i = 0; i < changesDatas.length; i++) {
       var change = changesDatas[i];
       if (change['changeType'] == "update") {
@@ -63,12 +64,17 @@ function DataBaseManager(modelName) {
       } else if (change['changeType'] == "delete") {
         allRemoveChanges.push(
             JSON.parse(change["entityJson"]));
+      } else if (change['changeType'] == "insert") {
+        allInsertChanges.push(
+            JSON.parse(change["entityJson"]));
       }
       this.setTimeStampDBVersion(MODEL_NAME,
           change[ENTITY_CHANGES_TIMESTAMP_PROPERTY_NAME])
     }
+    // TODO: Merge 3 following methods for better perfs.
     this.updateLocalDBWithArray(allUpdateChanges);
     this.applyRemoveChangesLocalDBWithArray(allRemoveChanges);
+    this.insertEntityArrayLocalDB(allInsertChanges);
   }
   
   
@@ -100,6 +106,11 @@ function DataBaseManager(modelName) {
    * @param {JSON} jsonEntity
    */
   this.addUpdateToOfflineWaitingList = function(jsonEntity) {
+    var isAnInsertedEntity =
+        this.verifyIfInsertedEntity(jsonEntity);
+    if (isAnInsertedEntity) {
+      return;
+    }
     var modelName = jsonEntity[ENTITY_KIND_PROPERTY_NAME];
     var offlineWaitingList = this.getOfflineWaitingList(modelName);
     var change = {};
@@ -110,8 +121,28 @@ function DataBaseManager(modelName) {
     this.setOfflineWaitingList(modelName, offlineWaitingList);
     this.updateSynchLogo();
   }
-  
-  
+
+
+  /**
+   * Verifies if the entity has been inserted in waiting list.
+   * @param {JSON} jsonEntity
+   */
+  this.verifyIfInsertedEntity = function(jsonEntity) {
+    var modelName = jsonEntity[ENTITY_KIND_PROPERTY_NAME];
+    var offlineWaitingList = this.getOfflineWaitingList(modelName);
+    var wasInserted = false;
+    for (var i = 0; i < offlineWaitingList.length; i++) {
+      if (offlineWaitingList[i]['entityJson'][ENTITY_KEY_PROPERTY_NAME] ==
+          jsonEntity[ENTITY_KEY_PROPERTY_NAME]) {
+        offlineWaitingList[i]['entityJson'] = jsonEntity;
+        wasInserted = true;
+      }
+    }
+    this.setOfflineWaitingList(modelName, offlineWaitingList);
+    return wasInserted;
+  }
+
+
   /**
    * @param {String} modelName
    * @return {String} jsonChanges
@@ -174,9 +205,10 @@ function DataBaseManager(modelName) {
    */
   this.callbackWaitingListSynchronization = function(data) {
     this.setTimeStampDBVersion(data['timeStampDBVersion']);
-    console.log("offlineWaitingList updateEntities Done");
+    this.updateTemporaryKeyArray(data['tempKeyToUpdateArray'])
     this.setOfflineWaitingList(MODEL_NAME, []);
     this.updateSynchLogo();
+    console.log("offlineWaitingList updateEntities Done");
   }
   
   
@@ -214,8 +246,8 @@ function DataBaseManager(modelName) {
       'url' : "updateEntity?entityJson=" + JSON.stringify(jsonEntity)
     })
     // TODO remove Debug Switch Here
-    .fail(this.successUpdateEntity.bind(this))
-    .done(this.failUpdateEntity.bindWithParams(this, [jsonEntity])
+    .done(this.successUpdateEntity.bind(this))
+    .fail(this.failUpdateEntity.bindWithParams(this, [jsonEntity])
     );
     this.updateLocalDBWithOneEntity(jsonEntity);
   }
@@ -273,6 +305,7 @@ function DataBaseManager(modelName) {
     this.buildTableFromJson(entities);
     this.storeDatas(modelName, entities);
   }
+  
 
 //=============================================================================
 // Random Generation Management.
@@ -281,16 +314,175 @@ function DataBaseManager(modelName) {
    * Generates a random entity in backend and launches full synch.
    */
   this.generateRandomEntity = function() {
-    $.get('/generateRandomEntity?entityName=' + MODEL_NAME,
-        this.successGenerateRandomEntity.bind(this));
+    $.get('/generateRandomEntity?entityName=' + MODEL_NAME)
+        .done(this.successGenerateRandomEntity.bind(this))
+        .fail(this.failGenerateRandomEntity.bind(this));
   }
   
+
   /**
    * Callback for a success when generating a new random entity.
    */
   this.successGenerateRandomEntity = function() {
     this.reloadDatas();
   }
+  
+  
+  /**
+   * Callback for a failure when generating a new random entity.
+   */
+  this.failGenerateRandomEntity = function() {
+    alert("To generate a random entity, you need to be online.");
+  }
+
+  
+//=============================================================================
+// Insert Management.  
+//=============================================================================
+  /**
+   * @param modelName {String}
+   */
+  this.getUniqueTemporaryKeyIndex = function(modelName) {
+    var temporaryKeyIndex = localStorage["temporaryKeyIndex-" + modelName];
+    temporaryKeyIndex = temporaryKeyIndex ? temporaryKeyIndex : 0;
+    localStorage["temporaryKeyIndex-" + modelName] =
+        parseInt(temporaryKeyIndex) + 1;
+    return temporaryKeyIndex;
+  }
+
+  
+  /**
+   * @param modelName {String}
+   * @param modelName {Number} The new Value of temporary Key;
+   */
+  this.setUniqueTemporaryKeyIndex = function(modelName, value) {
+    localStorage["temporaryKeyIndex-" + modelName] = value;
+  }
+  
+  
+  /**
+   * Inserts new Entity.
+   * @param {JSON} jsonEntity
+   */
+  this.insertEntity = function(jsonEntity) {
+    this.insertOneEntityInLocalDB(jsonEntity);
+    $.get("/insertEntity?jsonEntity=" + JSON.stringify(jsonEntity))
+        .done(this.successInsertEntity.bind(this))
+        .fail(this.failInsertEntity.bindWithParams(this, [jsonEntity]));
+  }
+  
+  
+  /**
+   * @param {JSON} jsonEntity Answer from update Entities callback.
+   */
+  this.insertOneEntityInLocalDB = function(jsonEntity) {
+    var allInsertArray = [jsonEntity];
+    this.insertEntityArrayLocalDB(allInsertArray);
+  }
+  
+  
+  /**
+   * Updates localStorage from entity
+   * @param {JsonArray} jsonEntities
+   */
+  this.insertEntityArrayLocalDB = function(jsonEntitiesArray) {
+    if (jsonEntitiesArray.length == 0) {
+      return;
+    }
+    var modelName = jsonEntitiesArray[0][ENTITY_KIND_PROPERTY_NAME];
+    var entities = this.getJSONEntitiesFromLocalStorage(modelName);
+    jsonEntitiesArray = this.removeExistingEntities(entities, jsonEntitiesArray);
+    for (var i = 0; i < jsonEntitiesArray.length; i++) {
+        entities.push(jsonEntitiesArray[i]);
+    }
+    this.buildTableFromJson(entities);
+    this.storeDatas(modelName, entities);
+  }
+
+  
+  /**
+   * Removes existing entities.
+   */
+  this.removeExistingEntities = function(entities, jsonEntitiesArray) {
+    var keysToadd = {};
+    for (var i = 0; i < jsonEntitiesArray.length; i++) {
+      var key = jsonEntitiesArray[i][ENTITY_KEY_PROPERTY_NAME];
+      keysToadd[key] = jsonEntitiesArray[i];
+    }
+    for (var i = 0; i < entities.length; i++) {
+      if (keysToadd[entities[i][ENTITY_KEY_PROPERTY_NAME]]) {
+        delete keysToadd[entities[i][ENTITY_KEY_PROPERTY_NAME]];
+      }
+    }
+    var jsonKeys = Object.keys(keysToadd)
+    jsonEntitiesArrayFiltered = [];
+    for (var i = 0; i < jsonKeys.length; i++) {
+      jsonEntitiesArrayFiltered.push(keysToadd[jsonKeys[i]]);
+    }
+    return jsonEntitiesArrayFiltered;
+  }
+  
+  
+  /**
+   * Success callback after inserting a new Entity.
+   */
+  this.successInsertEntity = function(data) {
+    this.setTimeStampDBVersion(data['timeStampDBVersion']);
+    this.updateTemporaryKeyArray([data["tempKeyToUpdate"]]);
+    console.log("success insert");
+  }
+
+
+  /**
+   * Updates temporary keys with real keys after inserting new Entity in the
+   *     datastore.
+   */
+  this.updateTemporaryKeyArray = function(keyToUpdateArray) {
+    var modelName = MODEL_NAME;
+    var entities = this.getJSONEntitiesFromLocalStorage(modelName);
+    for (var j = 0; j < keyToUpdateArray.length; j++) {
+      var keyToUpdate = keyToUpdateArray[j];
+      for (var i = 0, updated = false; i < entities.length && !updated; i++) {
+        var jsonEntity = entities[i];
+        var entityKey = jsonEntity[ENTITY_KEY_PROPERTY_NAME];
+        if (keyToUpdate["temporaryKey"] == entityKey) {
+          jsonEntity[ENTITY_KEY_PROPERTY_NAME] = keyToUpdate["newKey"];
+          updated = true;
+        }
+      }
+    }
+    this.buildTableFromJson(entities);
+    this.storeDatas(modelName, entities);    
+  }
+
+
+  /**
+   * Fail callback after inserting a new Entity.
+   * @param jsonEntity {JSON} the entity added.
+   */
+  this.failInsertEntity = function(jsonEntity) {
+    this.addInsertToOfflineWaitingList(jsonEntity);
+    this.changeOnlineStatus(false);
+    console.log(jsonEntity);
+  }
+  
+  
+  /**
+   * Adds an inserted entity to the offline waiting list.
+   * @param jsonEntity {JSON} the entity added.
+   */
+  this.addInsertToOfflineWaitingList = function(jsonEntity) {
+    var modelName = jsonEntity[ENTITY_KIND_PROPERTY_NAME];
+    var offlineWaitingList = this.getOfflineWaitingList(modelName);
+    var change = {};
+    change['changeType'] = "insert";
+    change['entityJson'] = jsonEntity;
+    change['entityKind'] = modelName;
+    offlineWaitingList.push(change);
+    this.setOfflineWaitingList(modelName, offlineWaitingList);
+    this.updateSynchLogo();
+  }
+  
 
 // =============================================================================
 // Remove Management.  
@@ -317,10 +509,10 @@ function DataBaseManager(modelName) {
     var removeChanges = [jsonEntity];
     this.applyRemoveChangesLocalDBWithArray(removeChanges);
   }
-  
-  
+
+
   /**
-   * Apply removes changes on local DB.
+   * Applies removes changes on local DB.
    */
   this.applyRemoveChangesLocalDBWithArray = function(removeChangeArray) {
     if (removeChangeArray.length == 0) {

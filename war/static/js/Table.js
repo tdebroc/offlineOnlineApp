@@ -42,6 +42,7 @@ function Table() {
 		this.headKeys = headKeys;
 		for (var i = 0; i < headKeys.length; i++) {
 			headLine.append("<th>" + headKeys[i] + "</th>")
+			headLine.attr('data-Headkey', headKeys[i]);
 		}
 		headLine.append("<th> Actions </th>")
 		this.tableEl.append(headLine);
@@ -73,7 +74,10 @@ function Table() {
         this.handleClickRemove.bind(this));
 	  $(document).on( "click", "#generateEntityModal .btn-primary",
         this.handleConfirmClickInsert.bind(this));
+	  $(document).on("click", "#insertNewEntity",
+	      this.handleInsertNewEntity.bind(this));
 	}
+
 	
 	/**
 	 * Handles click on remove
@@ -173,7 +177,36 @@ function Table() {
 		return buttons.html();
 	}
 	
+	
+	/**
+	 * Handles click on insert new Entity button.
+	 */
+	this.handleInsertNewEntity = function() {
+	  var form = new Form();
+	  form.buildForm(this.headKeys, MODEL_NAME, "TEMP" +
+	      this.dbManager.getUniqueTemporaryKeyIndex(MODEL_NAME));
+	  $("#insertNewEntityModel .modal-body").html("Let's insert new entity of " +
+	      "kind : " + MODEL_NAME);
+	  $("#insertNewEntityModel .modal-body").append(form.form);
+	  $("#insertNewEntityModel").modal();
+	  $("#insertNewEntityModel .insertEntity").unbind();
+	  $("#insertNewEntityModel .insertEntity").on("click",
+	      this.clickInsertNewEntity.bindWithParams(this, [form]));
+	}
+	
+	
+	/**
+	 * Handles click on insert a new entity button.
+	 * @parma {Form} form  The form Oject.
+	 */
+	this.clickInsertNewEntity = function(form) {
+	  var serializedForm = form.serializeForm();
+	  console.log("insert this new entity " + JSON.stringify(serializedForm));
+	  this.dbManager.insertEntity(serializedForm);
+	}
 }
+
+
 
 
 

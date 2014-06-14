@@ -23,7 +23,6 @@ function Form(dbManager) {
    * @param {Array[String]} opt_dataLine Value of the field.
    */
   this.buildForm = function(fields, entityKind, key, opt_dataLine) {
-    var dataLine = opt_dataLine || {};
     this.form = $('<form></form>');
 
     var input = this.buildInput('hidden', ENTITY_KIND_PROPERTY_NAME, 
@@ -32,13 +31,14 @@ function Form(dbManager) {
     
     var input = this.buildInput('hidden', ENTITY_KEY_PROPERTY_NAME, key);
     this.form.append(input);
-    
+    var table = $("<table></table>");
     for (var i = 0; i < fields.length; i++) {
-      var input = this.buildInput('text', fields[i], dataLine[i],
+      var input = this.buildInput('text', fields[i],
+          opt_dataLine ? opt_dataLine[i] : "",
           fields[i]);
-      this.form.append(input);
+      table.append(input);
     }
-    
+    this.form.append(table);
   }
   
   

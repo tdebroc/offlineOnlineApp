@@ -31,7 +31,7 @@
   %>
   <script type="text/javascript">
       // TODO : "ModelName" is bad naming convention, to change everywhere with 
-      // "EntityKind"
+      // "EntityKind" and stop using global variable !!!
       var MODEL_NAME = "<%=modelName%>";
       var ENTITY_KIND_PROPERTY_NAME = "<%=EntityConstant.ENTITY_KIND_PROPERTY_NAME%>";
       var ENTITY_KEY_PROPERTY_NAME = "<%=EntityConstant.ENTITY_KEY_PROPERTY_NAME%>";
@@ -52,17 +52,53 @@
 
   <div id="content">
     <div id="tableContainer">Please Wait..</div>
+    <button id="insertNewEntity" class="btn btn-primary"
+        data-toggle="modal">
+      Insert New Entity
+    </button>
+    <h2> Administration </h2>
     <button id="createNewEntity" class="btn btn-primary"
       data-toggle="modal" data-target="#newEntityModal">Create new
       Entity</button>
     <button id="generateNewRandomEntity" class="btn btn-primary"
-      data-toggle="modal" data-target="#generateEntityModal">
+        data-toggle="modal" data-target="#generateEntityModal">
       Generate New random Entity</button>
+    <br/>
+    <br/>
+    <div> 
+	    Switch Entity Kind :
+		  <select id="entityKindSwitcher" name="entityName"
+		      class="form-control entityKindSelect">
+		  </select>
+		</div>
   </div>
 
+  
+  <div id="insertNewEntityModel" class="modal fade bs-example-modal-lg"
+      tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+      aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"
+            aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Insert New Entity</h4>
+        </div>
+        <div class="modal-body"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default cancelInsertEntity"
+            data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary insertEntity">
+            Insert
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
   <div id="updateModal" class="modal fade bs-example-modal-lg"
-    tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-    aria-hidden="true">
+	    tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+	    aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
@@ -82,8 +118,8 @@
   </div>
 
   <div id="newEntityModal" class="modal fade bs-example-modal-lg"
-    tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-    aria-hidden="true">
+	    tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+	    aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
@@ -163,10 +199,7 @@
     </div>
   </div>
   
-  Switch Entity Kind :
-  <select id="entityKindSwitcher" name="entityName"
-      class="form-control entityKindSelect">
-  </select>
+  
   
   
   <script src="static/js/jquery-2.1.1.js"></script>

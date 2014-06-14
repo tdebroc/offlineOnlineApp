@@ -2,11 +2,15 @@ package com.tdebroc.utilities;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
@@ -135,28 +139,150 @@ public class ChangesEntityManager {
     datastore.delete(key);
     return ChangesEntityManager.recordChange(jsonEntity, "delete", entityKind);
   }
+
+  
+  /**
+   * Inserts an entity in the datastore.
+   * @param entityJson The jsonObject containing properties for new entity to
+   *     insert.
+   */
+  public static JsonObject insertEntityFromJson(JsonObject entityJson) {
+    String tempEntityKey =
+        entityJson.get(EntityConstant.ENTITY_KEY_PROPERTY_NAME).getAsString();
+    String entityKind =
+        entityJson.get(EntityConstant.ENTITY_KIND_PROPERTY_NAME).getAsString();
+    
+    Entity insertedEntity = new Entity(entityKind);
+    Set<String> invisiblesKeys = JsonUtilities.getInvisibleKeys();
+    
+    for (Map.Entry<String,JsonElement> entry : entityJson.entrySet()) {
+      String propertyName = entry.getKey();
+      if (!invisiblesKeys.contains(propertyName)) {
+        insertedEntity.setProperty(propertyName, entry.getValue().getAsString());
+      }
+    }
+    
+    long timeStampDBVersion = insertEntity(insertedEntity);
+    
+    JsonObject response = new JsonObject();
+    response.addProperty(
+        EntityConstant.ENTITY_CHANGES_TIMESTAMP_PROPERTY_NAME,
+        timeStampDBVersion);
+    JsonObject tempKeyToUpdate = new JsonObject();
+    tempKeyToUpdate.addProperty("temporaryKey", tempEntityKey);
+    String newKey = KeyFactory.keyToString(insertedEntity.getKey());
+    tempKeyToUpdate.addProperty("newKey", newKey);
+    response.add("tempKeyToUpdate", tempKeyToUpdate);
+    
+    return response;
+  }
+  
+  
+  /**
+   * Inserts an entity in from the datastore.
+   * @param entity The entity to insert.
+   */
+  public static long insertEntity(Entity entity) {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(entity);
+    long timeStamp = recordChange(JsonUtilities.entityToJson(entity),
+        "insert", entity.getKind());
+    return timeStamp;
+  }
+  
+  
+  /**
+   * Updates a datastore entity from it's JSON.
+   * @param entityJson
+   * @return {Boolean} Whether the update had worked or not.
+   */
+  public static long updateEntityFromJson(JsonObject entityJson) {
+    String keyString = entityJson.get(EntityConstant.ENTITY_KEY_PROPERTY_NAME).getAsString();
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Key key = KeyFactory.stringToKey(keyString);
+    try {
+      Entity entity = datastore.get(key);
+      Set<String> invisiblesKeys = JsonUtilities.getInvisibleKeys();
+      for (Map.Entry<String,JsonElement> entry : entityJson.entrySet()) {
+        String propertyName = entry.getKey();
+        if (!invisiblesKeys.contains(propertyName)) {
+          entity.setProperty(propertyName, entry.getValue().getAsString());
+        }
+      }
+      datastore.put(entity);
+
+      return ChangesEntityManager.recordChange(entityJson, "update");
+    } catch (EntityNotFoundException e) {
+      e.printStackTrace();
+      return -1;
+    }
+  }
+  
+  
+  /**
+   * Updates several datastore entities from a JSON array containing them.
+   * @param entitiesJsonArray {JsonArray}
+   * @return {Boolean} Whether the update had worked or not.
+   */
+  public static Long updateEntitiesFromJson(JsonArray entitiesJsonArray) {
+    Iterator<JsonElement> entititiesIterator = entitiesJsonArray.iterator();
+    long timeStamp = -1;
+    while (entititiesIterator.hasNext()) {
+      JsonElement jsonElement = entititiesIterator.next();
+      timeStamp = updateEntityFromJson(jsonElement.getAsJsonObject());
+    }
+    return timeStamp;
+  }
   
   
   /**
    * Pushes changes to server.
    * @return
    */
-  public static Long pushChangesJson(JsonArray changes) {
+  public static JsonObject pushChangesJson(JsonArray changes) {
     long timeStampDBVersion = -1;
+    JsonObject response = new JsonObject();
+    response.add("tempKeyToUpdateArray", new JsonArray());
     for (JsonElement change : changes) {
       JsonObject changeObject = change.getAsJsonObject();
-      if (changeObject.get("changeType").getAsString().equals("update")) {
-        timeStampDBVersion =
-            JsonUtilities.updateEntityFromJson(
-                changeObject.get("entityJson").getAsJsonObject());
-      } else if (changeObject.get("changeType").equals("delete")) {
-        timeStampDBVersion =
-            JsonUtilities.updateEntityFromJson(
-                changeObject.get("entityJson").getAsJsonObject());
+      switch (changeObject.get("changeType").getAsString()) {
+        case "update": {
+          timeStampDBVersion =
+              updateEntityFromJson(
+                  changeObject.get("entityJson").getAsJsonObject());
+          break;
+        }
+        case "delete" : {
+          timeStampDBVersion =
+              updateEntityFromJson(
+                  changeObject.get("entityJson").getAsJsonObject());
+          break;
+        }
+        case "insert" : {
+          JsonObject responseInsert =
+              insertEntityFromJson(
+                  changeObject.get("entityJson").getAsJsonObject());
+          timeStampDBVersion =
+              responseInsert.get(
+                  EntityConstant.ENTITY_CHANGES_TIMESTAMP_PROPERTY_NAME)
+              .getAsLong();
+          response.get("tempKeyToUpdateArray").getAsJsonArray().
+              add(responseInsert.get("tempKeyToUpdate"));
+          break;
+        }
+        default : {
+          System.out.println("Unknown changeType : " + 
+              changeObject.get("changeType").getAsString());          
+        };
       }
     }
-    return timeStampDBVersion;
+    response.addProperty(
+        EntityConstant.ENTITY_CHANGES_TIMESTAMP_PROPERTY_NAME,
+        timeStampDBVersion);
+    return response;
   }
+  
+  
   
 
 }

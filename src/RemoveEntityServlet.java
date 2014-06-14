@@ -31,8 +31,4 @@ public class RemoveEntityServlet extends HttpServlet {
     resp.setContentType("application/json");
     resp.getWriter().println(response);
   }
-
-
-  
-  
 }
