@@ -253,9 +253,12 @@ public class ChangesEntityManager {
           break;
         }
         case "delete" : {
+          String entityKey = changeObject.get("entityJson").getAsJsonObject().
+              get(EntityConstant.ENTITY_KEY_PROPERTY_NAME).getAsString();
+          String entityKind = changeObject.get(
+              EntityConstant.ENTITY_KIND_PROPERTY_NAME).getAsString();
           timeStampDBVersion =
-              updateEntityFromJson(
-                  changeObject.get("entityJson").getAsJsonObject());
+              removeEntity(entityKey, entityKind);
           break;
         }
         case "insert" : {

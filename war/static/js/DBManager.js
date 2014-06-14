@@ -116,7 +116,7 @@ function DataBaseManager(modelName) {
     var change = {};
     change['changeType'] = "update";
     change['entityJson'] = jsonEntity;
-    change['entityKind'] = modelName;
+    change[ENTITY_KIND_PROPERTY_NAME] = modelName;
     offlineWaitingList.push(change);
     this.setOfflineWaitingList(modelName, offlineWaitingList);
     this.updateSynchLogo();
@@ -478,7 +478,7 @@ function DataBaseManager(modelName) {
     var change = {};
     change['changeType'] = "insert";
     change['entityJson'] = jsonEntity;
-    change['entityKind'] = modelName;
+    change[ENTITY_KIND_PROPERTY_NAME] = modelName;
     offlineWaitingList.push(change);
     this.setOfflineWaitingList(modelName, offlineWaitingList);
     this.updateSynchLogo();
@@ -567,10 +567,12 @@ function DataBaseManager(modelName) {
    */
   this.addRemoveToOfflineWaitingList = function(key, modelName) {
     var offlineWaitingList = this.getOfflineWaitingList(modelName);
+    var jsonEntity = {};
+    jsonEntity[ENTITY_KEY_PROPERTY_NAME] = key;
     var change = {};
     change['changeType'] = "delete";
-    change['entityJson'] = {ENTITY_KEY_PROPERTY_NAME : key};
-    change['entityKind'] = modelName;
+    change['entityJson'] = jsonEntity;
+    change[ENTITY_KIND_PROPERTY_NAME] = modelName;
     offlineWaitingList.push(change);
     this.setOfflineWaitingList(modelName, offlineWaitingList);
     this.updateSynchLogo();
