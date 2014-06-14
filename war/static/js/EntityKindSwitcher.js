@@ -30,6 +30,7 @@ function EntityKindSwitcher(dbManager) {
    * @param {JSON Array} : contains all the informations of the table EntityProperty
    */
   this.callbackSuccessCreateRandomEntity = function(data){
+    $(".entityKindSelect").append($("<option value=''>--</option>"));
     $.each(data.entities, function(i,e) {
   	  entityName = e.EntityName;
   	  var opt = $("<option></option>");

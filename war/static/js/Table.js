@@ -73,7 +73,7 @@ function Table() {
 	  this.tableEl.on( "click", "." + removeButtonClass,
         this.handleClickRemove.bind(this));
 	  $(document).on( "click", "#generateEntityModal .btn-primary",
-        this.handleConfirmClickInsert.bind(this));
+        this.handleConfirmGenerateRandom.bind(this));
 	  $(document).on("click", "#insertNewEntity",
 	      this.handleInsertNewEntity.bind(this));
 	}
@@ -112,8 +112,9 @@ function Table() {
 	/**
 	 * Handles confirm click on insert new entity.
 	 */
-	this.handleConfirmClickInsert = function() {
-	  this.dbManager.generateRandomEntity();
+	this.handleConfirmGenerateRandom = function() {
+	  var modelName = $('#addRandom').val();
+	  this.dbManager.generateRandomEntity(modelName);
 	}
 	
 	

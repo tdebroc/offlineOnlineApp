@@ -314,9 +314,11 @@ function DataBaseManager(modelName) {
 //=============================================================================
   /**
    * Generates a random entity in backend and launches full synch.
+   * @param {String} Name of the model.
    */
-  this.generateRandomEntity = function() {
-    $.get('/generateRandomEntity?entityName=' + MODEL_NAME)
+  this.generateRandomEntity = function(modelName) {
+    modelName = modelName == "" ? MODEL_NAME : modelName;
+    $.get('/generateRandomEntity?entityName=' + modelName)
         .done(this.successGenerateRandomEntity.bind(this))
         .fail(this.failGenerateRandomEntity.bind(this));
   }
