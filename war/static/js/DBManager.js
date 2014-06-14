@@ -31,7 +31,7 @@ function DataBaseManager(modelName) {
         + this.getTimeStampDBVersion(MODEL_NAME) + "&"
         + "entityKind=" + MODEL_NAME})
     .done(this.checkSynchronizationSuccess.bind(this));
-    //.fail(this.checkSynchronizationFailure.bind(this));
+    .fail(this.checkSynchronizationFailure.bind(this));
     setTimeout(this.checkSynchronization.bind(this), checkOnlineDelay);
   }
   
@@ -245,7 +245,6 @@ function DataBaseManager(modelName) {
     $.ajax({
       'url' : "updateEntity?entityJson=" + JSON.stringify(jsonEntity)
     })
-    // TODO remove Debug Switch Here
     .done(this.successUpdateEntity.bind(this))
     .fail(this.failUpdateEntity.bindWithParams(this, [jsonEntity])
     );
@@ -495,8 +494,8 @@ function DataBaseManager(modelName) {
   this.removeEntity = function(key) {
     $.ajax({'url' : "removeEntity?entityKey=" + key +
         "&entityKind=" + MODEL_NAME})
-      .fail(this.removeEntitySuccess.bind(this))
-      .done(this.removeEntityFailure.bindWithParams(this, [key, MODEL_NAME]));
+      .done(this.removeEntitySuccess.bind(this))
+      .fail(this.removeEntityFailure.bindWithParams(this, [key, MODEL_NAME]));
     this.removeEntityFromLocalDB(key);
   }
 
