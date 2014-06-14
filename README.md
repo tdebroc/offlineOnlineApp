@@ -1,9 +1,11 @@
-offlineOnlineApp
+#offlineOnlineApp
 ================
 
 
 Prototype for aWeb Application handling Synchronization of entities of a datastore online and offline and across several clients.
 
+## Vocabulary
+<b>Entity</b> is the fundamental unit of data storage. It has an immutable identifier (contained in the Key) object, a reference to an optional parent Entity, a kind (represented as an arbitrary string), and a set of zero or more typed properties.
 
 ## Demo
 
@@ -19,13 +21,16 @@ Model is : products
 
 http://1-dot-offlineonlinesynchronization.appspot.com/?modelName=Product
 
-Todo: add a service to generate quickly a new entity schema.
+It's possible to add new Entity Kind via the popin "create new entity". There you will tell the name of your entity and add some properties for it.
+Then you can switch to the view of this entity via the select box: "Switch Entity Kind ". To fill it you can do "Generate Random Entity" (it's not synch across clients and offline).
+
+Then you can play with your entities : update, insert and remove are handled offline/online and across several clients in the mean time.
 
 
 ## Demo
 - Uses localStorage to store all datas on client side.
 - Cache Manifest to use app offline.
-- Synchronizes by pushing only changes done (Update and soon Insert/Delete) to avoid transfering the whole database each time...
+- Synchronizes by pushing only changes done (Update, Insert or Delete) to avoid transfering the whole database each time...
 
 ## Updates online/offline across several clients
 For a use case, you can take 2 clients C1 and C2, 2 mobiles devices or simplier Chrome and Mozilla.
@@ -36,4 +41,7 @@ For a use case, you can take 2 clients C1 and C2, 2 mobiles devices or simplier 
 
 ## Cons
 - For the moment doesn't work with JOIN
-- Consistency might not be perfect due to appengine delay to propagate all datas...
+- Consistency is not perfect : Be careful to appengine datastore delay. To choice of using timestamp to check datastore synchronization should be subject to criticism because it leads to conficts.
+
+
+
