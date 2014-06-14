@@ -30,7 +30,7 @@ function DataBaseManager(modelName) {
     $.ajax({'url' : "checkSynchronization?timestamp="
         + this.getTimeStampDBVersion(MODEL_NAME) + "&"
         + "entityKind=" + MODEL_NAME})
-    .done(this.checkSynchronizationSuccess.bind(this));
+    .done(this.checkSynchronizationSuccess.bind(this))
     .fail(this.checkSynchronizationFailure.bind(this));
     setTimeout(this.checkSynchronization.bind(this), checkOnlineDelay);
   }
