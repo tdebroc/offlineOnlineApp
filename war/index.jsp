@@ -118,8 +118,8 @@
   </div>
 
   <div id="newEntityModal" class="modal fade bs-example-modal-lg"
-	    tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-	    aria-hidden="true">
+    tabindex="-1" role="dialog" aria-labelledby="Create"
+    aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
@@ -204,12 +204,12 @@
   
   <script src="static/js/jquery-2.1.1.js"></script>
   <script src="static/js/bootstrap.js"></script>
-  <script src="static/js/entityCreationManager.js"></script>
   <script src="static/js/main.js"></script>
   <script src="static/js/Table.js"></script>
   <script src="static/js/Form.js"></script>
   <script src="static/js/DBManager.js"></script>
   <script src="static/js/EntityKindSwitcher.js"></script>
+  <script src="static/js/EntityCreationManager.js"></script>
 </body>
 
 </html>

@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.tdebroc.utilities.JsonUtilities;
 
 
 public class GenerateNewEntityServlet extends HttpServlet {
@@ -33,8 +32,9 @@ public class GenerateNewEntityServlet extends HttpServlet {
 	
 	
 	/**
-	 * function to create an entity based on get parameters
-	 * @param req : request that posess required parameters to create new Entity
+	 * Creates an Entity based on parameters, there are as many lines added 
+	 * in the EntityProperty table as there are properties to add for the Entity.
+	 * @param req : request that possesses required parameters to create new Entity.
 	 */
 	public void createEntity(HttpServletRequest req){
 		String entityName = req.getParameter("entityName");

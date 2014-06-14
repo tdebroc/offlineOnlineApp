@@ -34,6 +34,7 @@ public class GenerateRandomEntityServlet extends HttpServlet {
 
   /**
    * Generates a random entity for a specified entity kind.
+   * @param {String} Name of the entity to generate randomly.
    */
   public static Entity generateRandomEntity(String entityKind) {
     Entity newRandomEntity = new Entity(entityKind);

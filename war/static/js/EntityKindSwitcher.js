@@ -11,6 +11,7 @@ function EntityKindSwitcher(dbManager) {
   this.init = function() {
     $('#entityKindSwitcher').on('change',
         this.switchEntityKind.bind(this));
+    this.fillEntityKindSelect();
   }
 
   
@@ -21,6 +22,30 @@ function EntityKindSwitcher(dbManager) {
   this.switchEntityKind = function(e) {
     MODEL_NAME = $(e.currentTarget).val();
     this.dbManager.loadDatas();
+  }
+  
+ 
+  /**
+   * Callback to generate the select fields for already existing entities
+   * @param {JSON Array} : contains all the informations of the table EntityProperty
+   */
+  this.callbackSuccessCreateRandomEntity = function(data){
+    $.each(data.entities, function(i,e) {
+	  entityName = e.EntityName;
+	  var opt = $("<option></option>");
+	  opt.attr("value",entityName);
+	  opt.html(entityName);
+	  $(".entityKindSelect").append(opt);
+ 	});
+	this.dbManager.reloadDatas();
+  }
+  /**
+   * Ajax call to populate select fields to generate a Random Entity whose properties
+   * already exist in EntityProperty
+   */
+ this.fillEntityKindSelect = function(){
+   $(".entityKindSelect").html("");
+   $.get("getAllEntityNames", this.callbackSuccessCreateRandomEntity.bind(this));
   }
   
   this.init();
