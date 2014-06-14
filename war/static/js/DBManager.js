@@ -189,9 +189,11 @@ function DataBaseManager(modelName) {
     // TODO() : parses all local Storage key to look all offlineWainting list. 
     var offlineWaitingList =
         this.getOfflineWaitingList(MODEL_NAME);
-    if (!offlineWaitingList || offlineWaitingList.length == 0) {
+    if (this.isPushingChange || !offlineWaitingList
+        || offlineWaitingList.length == 0) {
       return;
     }
+    this.isPushingChange = true;
     // TODO Should be a POST, verify everywhere else!!!
     $.get("pushChanges?changes=" + JSON.stringify(offlineWaitingList))
         .done(this.callbackWaitingListSynchronization.bind(this))
@@ -208,6 +210,7 @@ function DataBaseManager(modelName) {
     this.updateTemporaryKeyArray(data['tempKeyToUpdateArray'])
     this.setOfflineWaitingList(MODEL_NAME, []);
     this.updateSynchLogo();
+    this.isPushingChange = false;
     console.log("offlineWaitingList updateEntities Done");
   }
   
