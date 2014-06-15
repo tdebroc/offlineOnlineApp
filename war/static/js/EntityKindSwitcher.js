@@ -27,7 +27,7 @@ function EntityKindSwitcher(dbManager) {
  
   /**
    * Callback to generate the select fields for already existing entities
-   * @param {JSON Array} : contains all the informations of the table EntityProperty
+   * @param {JSON Array} : contains the Entities with their name
    */
   this.callbackSuccessCreateRandomEntity = function(data){
     $(".entityKindSelect").append($("<option value=''>--</option>"));

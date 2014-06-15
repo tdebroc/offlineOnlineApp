@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.gson.JsonArray;
@@ -29,11 +28,7 @@ public class GetEntitiesServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery pq = datastore.prepare(q);  
     
-    JsonArray allEntities = new JsonArray();
-    
-    for (Entity result : pq.asIterable()) {
-      allEntities.add(JsonUtilities.entityToJson(result));
-    }
+    JsonArray allEntities = JsonUtilities.returnJsonArrayFromQuery(pq);
     long timestamp = ChangesEntityManager.getLastTimestamp(entityName);
 
     JsonObject response = new JsonObject();
