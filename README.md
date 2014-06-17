@@ -48,3 +48,5 @@ Use case : take 2 clients C1 and C2, with 2 mobile devices or more simply two br
 - HTML5 (CSS, Javascript)
 - Bootstrap.js
 
+##Warning
+-To switch between already existing Entities while offline you must select them once at least while online (since it's currently mandatory to have the local storage filled)
