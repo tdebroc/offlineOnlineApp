@@ -38,7 +38,7 @@ function EntityKindSwitcher(dbManager) {
   	  opt.html(entityName);
   	  $(".entityKindSelect").append(opt);
    	});
-  	this.dbManager.reloadDatas();
+  	this.dbManager.loadDatas();
   }
   /**
    * Ajax call to populate select fields to generate a Random Entity whose properties

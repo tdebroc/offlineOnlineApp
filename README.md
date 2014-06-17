@@ -40,7 +40,7 @@ Use case : take 2 clients C1 and C2, with 2 mobile devices or more simply two br
 
 
 ## Cons
-- For the moment SELECT requests doesn't work with JOIN
+- For the moment SELECT and UPDATE requests don't work with the JOIN statement.
 - Consistency is not perfect : Be careful with the appengine datastore delay. The choice of using timestamp to check datastore synchronization should be discussed because it may lead to conficts.
 
 ##Technologies
