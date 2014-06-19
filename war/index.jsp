@@ -201,15 +201,7 @@
   
   
   
-  
-  <script src="static/js/jquery-2.1.1.js"></script>
-  <script src="static/js/bootstrap.js"></script>
-  <script src="static/js/main.js"></script>
-  <script src="static/js/Table.js"></script>
-  <script src="static/js/Form.js"></script>
-  <script src="static/js/DBManager.js"></script>
-  <script src="static/js/EntityKindSwitcher.js"></script>
-  <script src="static/js/EntityCreationManager.js"></script>
+  <script data-main="static/js/main.js" src="static/js/require.js"></script>
 </body>
 
 </html>
