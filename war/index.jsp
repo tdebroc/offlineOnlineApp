@@ -18,11 +18,11 @@
 </head>
 
 <body>
-  <%
+  <!-- <%
     Date d = new Date();
   %>
   index.jsp Generated on
-  <%=d.toLocaleString()%>
+  <%=d.toLocaleString()%> -->
   <%
     String modelName = request.getParameter("modelName");;
         if (modelName == null) {

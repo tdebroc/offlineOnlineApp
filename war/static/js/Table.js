@@ -202,6 +202,10 @@ function Table() {
 	 */
 	this.clickInsertNewEntity = function(form) {
 	  var serializedForm = form.serializeForm();
+	  var index = this.dbManager.getUniqueTemporaryKeyIndex(MODEL_NAME);
+		var newKey = "TEMP" + index;
+		serializedForm.key = newKey;
+		this.dbManager.setUniqueTemporaryKeyIndex(MODEL_NAME, parseInt(index) +1 );
 	  console.log("insert this new entity " + JSON.stringify(serializedForm));
 	  this.dbManager.insertEntity(serializedForm);
 	}
