@@ -18,11 +18,13 @@
 </head>
 
 <body>
+  <!-- 
   <%
     Date d = new Date();
   %>
   index.jsp Generated on
-  <%=d.toLocaleString()%>
+  <%=d.toLocaleString()%> 
+  -->
   <%
     String modelName = request.getParameter("modelName");;
         if (modelName == null) {
@@ -201,7 +203,7 @@
   
   
   
-  <script data-main="static/js/main.js" src="static/js/require.js"></script>
+  <script data-main="static/js/app/main.js" src="static/js/lib/require.js"></script>
 </body>
 
 </html>

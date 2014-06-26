@@ -1,4 +1,4 @@
-define([ 'jquery', 'DBManager' ], function($, dbManager) {
+define([ 'jquery', 'DBManager', 'angular' ], function($, dbManager) {
 	/**
 	 * Class handling the switch of entity kind for the table
 	 */

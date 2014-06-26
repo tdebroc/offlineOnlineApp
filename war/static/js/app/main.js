@@ -1,7 +1,11 @@
 requirejs.config({
-	baseUrl : 'static/js/',
+	//base url is our folder with the scripts we have written
+	baseUrl : 'static/js/app',
 	paths : {
-		jquery : 'jquery-2.1.1'
+		//Add paths for each library we are going to use in the project
+		jquery : '../lib/jquery-2.1.1',
+		bootstrap : '../lib/bootstrap',
+		angular : '../lib/angular'
 	}
 });
 
